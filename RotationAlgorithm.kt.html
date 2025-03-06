@@ -1,0 +1,186 @@
+<html>
+<head>
+<title>RotationAlgorithm.kt</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<style type="text/css">
+.s0 { color: #cf8e6d;}
+.s1 { color: #bcbec4;}
+.s2 { color: #bcbec4;}
+.s3 { color: #7a7e85;}
+.s4 { color: #6aab73;}
+.s5 { color: #2aacb8;}
+</style>
+</head>
+<body bgcolor="#1e1f22">
+<table CELLSPACING=0 CELLPADDING=5 COLS=1 WIDTH="100%" BGCOLOR="#606060" >
+<tr><td><center>
+<font face="Arial, Helvetica" color="#000000">
+RotationAlgorithm.kt</font>
+</center></td></tr></table>
+<pre><span class="s0">package </span><span class="s1">com</span><span class="s2">.</span><span class="s1">example</span><span class="s2">.</span><span class="s1">rotationappv10</span><span class="s2">.</span><span class="s1">algorithm</span>
+
+<span class="s1">import com</span><span class="s2">.</span><span class="s1">example</span><span class="s2">.</span><span class="s1">rotationappv10</span><span class="s2">.</span><span class="s1">data</span><span class="s2">.</span><span class="s1">model</span><span class="s2">.</span><span class="s1">Assignment</span>
+<span class="s1">import com</span><span class="s2">.</span><span class="s1">example</span><span class="s2">.</span><span class="s1">rotationappv10</span><span class="s2">.</span><span class="s1">data</span><span class="s2">.</span><span class="s1">model</span><span class="s2">.</span><span class="s1">Officer</span>
+<span class="s1">import com</span><span class="s2">.</span><span class="s1">example</span><span class="s2">.</span><span class="s1">rotationappv10</span><span class="s2">.</span><span class="s1">data</span><span class="s2">.</span><span class="s1">model</span><span class="s2">.</span><span class="s1">PositionKey</span>
+<span class="s1">import com</span><span class="s2">.</span><span class="s1">example</span><span class="s2">.</span><span class="s1">rotationappv10</span><span class="s2">.</span><span class="s1">data</span><span class="s2">.</span><span class="s1">model</span><span class="s2">.</span><span class="s1">ShiftSetting</span>
+<span class="s1">import java</span><span class="s2">.</span><span class="s1">text</span><span class="s2">.</span><span class="s1">SimpleDateFormat</span>
+<span class="s1">import java</span><span class="s2">.</span><span class="s1">util</span><span class="s2">.</span><span class="s1">Calendar</span>
+<span class="s1">import java</span><span class="s2">.</span><span class="s1">util</span><span class="s2">.</span><span class="s1">Locale</span>
+<span class="s1">import android</span><span class="s2">.</span><span class="s1">util</span><span class="s2">.</span><span class="s1">Log </span><span class="s3">// Import Log</span>
+
+<span class="s1">private const </span><span class="s0">val </span><span class="s1">TAG </span><span class="s2">= </span><span class="s4">&quot;RotationAlgorithm&quot; </span><span class="s3">// Define a tag for logging</span>
+
+<span class="s0">class </span><span class="s1">RotationAlgorithm </span><span class="s2">{</span>
+
+    <span class="s0">fun </span><span class="s1">generateRotation</span><span class="s2">(</span>
+        <span class="s1">officers: List</span><span class="s2">&lt;</span><span class="s1">Officer</span><span class="s2">&gt;,</span>
+        <span class="s1">positionKeys: List</span><span class="s2">&lt;</span><span class="s1">PositionKey</span><span class="s2">&gt;,</span>
+        <span class="s1">shiftSetting: ShiftSetting</span>
+    <span class="s2">)</span><span class="s1">: List</span><span class="s2">&lt;</span><span class="s1">Assignment</span><span class="s2">&gt; {</span>
+        <span class="s1">Log</span><span class="s2">.</span><span class="s1">d</span><span class="s2">(</span><span class="s1">TAG</span><span class="s2">, </span><span class="s4">&quot;generateRotation called with:&quot;</span><span class="s2">)</span>
+        <span class="s1">Log</span><span class="s2">.</span><span class="s1">d</span><span class="s2">(</span><span class="s1">TAG</span><span class="s2">, </span><span class="s4">&quot;  Officers: </span><span class="s0">$</span><span class="s1">officers</span><span class="s4">&quot;</span><span class="s2">)</span>
+        <span class="s1">Log</span><span class="s2">.</span><span class="s1">d</span><span class="s2">(</span><span class="s1">TAG</span><span class="s2">, </span><span class="s4">&quot;  Position Keys: </span><span class="s0">$</span><span class="s1">positionKeys</span><span class="s4">&quot;</span><span class="s2">)</span>
+        <span class="s1">Log</span><span class="s2">.</span><span class="s1">d</span><span class="s2">(</span><span class="s1">TAG</span><span class="s2">, </span><span class="s4">&quot;  Shift Setting: </span><span class="s0">$</span><span class="s1">shiftSetting</span><span class="s4">&quot;</span><span class="s2">)</span>
+
+        <span class="s0">val </span><span class="s1">assignments </span><span class="s2">= </span><span class="s1">mutableListOf</span><span class="s2">&lt;</span><span class="s1">Assignment</span><span class="s2">&gt;()</span>
+        <span class="s0">val </span><span class="s1">timeSlots </span><span class="s2">= </span><span class="s1">generateTimeSlots</span><span class="s2">(</span><span class="s1">shiftSetting</span><span class="s2">)</span>
+        <span class="s1">Log</span><span class="s2">.</span><span class="s1">d</span><span class="s2">(</span><span class="s1">TAG</span><span class="s2">, </span><span class="s4">&quot;Generated Time Slots: </span><span class="s0">$</span><span class="s1">timeSlots</span><span class="s4">&quot;</span><span class="s2">)</span>
+
+        <span class="s0">val </span><span class="s1">breakPositionKey </span><span class="s2">= </span><span class="s1">positionKeys</span><span class="s2">.</span><span class="s1">firstOrNull </span><span class="s2">{ </span><span class="s1">it</span><span class="s2">.</span><span class="s1">isBreak </span><span class="s2">}</span>
+            <span class="s1">?: PositionKey</span><span class="s2">(</span><span class="s4">&quot;BRK&quot;</span><span class="s2">, </span><span class="s4">&quot;Break&quot;</span><span class="s2">, </span><span class="s0">false</span><span class="s2">, </span><span class="s1">listOf</span><span class="s2">(), </span><span class="s0">true</span><span class="s2">)</span>
+        <span class="s1">Log</span><span class="s2">.</span><span class="s1">d</span><span class="s2">(</span><span class="s1">TAG</span><span class="s2">, </span><span class="s4">&quot;Break Position Key: </span><span class="s0">$</span><span class="s1">breakPositionKey</span><span class="s4">&quot;</span><span class="s2">)</span>
+
+        <span class="s0">for </span><span class="s2">(</span><span class="s1">timeSlot </span><span class="s0">in </span><span class="s1">timeSlots</span><span class="s2">) {</span>
+            <span class="s0">val </span><span class="s1">availableOfficersForTimeSlot </span><span class="s2">= </span><span class="s1">officers</span><span class="s2">.</span><span class="s1">toMutableList</span><span class="s2">() </span><span class="s3">// All officers are initially available</span>
+            <span class="s1">Log</span><span class="s2">.</span><span class="s1">d</span><span class="s2">(</span><span class="s1">TAG</span><span class="s2">, </span><span class="s4">&quot;Processing time slot: </span><span class="s0">$</span><span class="s1">timeSlot</span><span class="s4">&quot;</span><span class="s2">)</span>
+
+            <span class="s3">// --- Assign Breaks First ---</span>
+            <span class="s0">for </span><span class="s2">(</span><span class="s1">officer </span><span class="s0">in </span><span class="s1">officers</span><span class="s2">) {</span>
+                <span class="s0">val </span><span class="s1">breakTimes </span><span class="s2">= </span><span class="s1">calculateBreakTimes</span><span class="s2">(</span><span class="s1">officer</span><span class="s2">, </span><span class="s1">shiftSetting</span><span class="s2">)</span>
+                <span class="s0">val </span><span class="s1">isAssigned </span><span class="s2">= </span><span class="s1">assignments</span><span class="s2">.</span><span class="s1">any </span><span class="s2">{ </span><span class="s1">it</span><span class="s2">.</span><span class="s1">officer </span><span class="s2">== </span><span class="s1">officer </span><span class="s2">&amp;&amp; </span><span class="s1">it</span><span class="s2">.</span><span class="s1">timeSlot </span><span class="s2">== </span><span class="s1">timeSlot </span><span class="s2">}</span>
+                <span class="s1">Log</span><span class="s2">.</span><span class="s1">d</span><span class="s2">(</span><span class="s1">TAG</span><span class="s2">, </span><span class="s4">&quot;  Checking officer: </span><span class="s0">${</span><span class="s1">officer</span><span class="s2">.</span><span class="s1">name</span><span class="s0">}</span><span class="s4">, Break Times: </span><span class="s0">$</span><span class="s1">breakTimes</span><span class="s4">, Already Assigned: </span><span class="s0">$</span><span class="s1">isAssigned</span><span class="s4">&quot;</span><span class="s2">)</span>
+                <span class="s0">if </span><span class="s2">(!</span><span class="s1">isAssigned </span><span class="s2">&amp;&amp; </span><span class="s1">breakTimes</span><span class="s2">.</span><span class="s1">contains</span><span class="s2">(</span><span class="s1">timeSlot</span><span class="s2">) &amp;&amp; </span><span class="s1">isOfficerAvailable</span><span class="s2">(</span><span class="s1">officer</span><span class="s2">, </span><span class="s1">timeSlot</span><span class="s2">)) {</span>
+                    <span class="s1">Log</span><span class="s2">.</span><span class="s1">d</span><span class="s2">(</span><span class="s1">TAG</span><span class="s2">, </span><span class="s4">&quot;    Assigning BREAK to </span><span class="s0">${</span><span class="s1">officer</span><span class="s2">.</span><span class="s1">name</span><span class="s0">} </span><span class="s4">at </span><span class="s0">$</span><span class="s1">timeSlot</span><span class="s4">&quot;</span><span class="s2">)</span>
+                    <span class="s1">assignments</span><span class="s2">.</span><span class="s1">add</span><span class="s2">(</span>
+                        <span class="s1">Assignment</span><span class="s2">(</span>
+                            <span class="s1">timeSlot </span><span class="s2">= </span><span class="s1">timeSlot</span><span class="s2">,</span>
+                            <span class="s1">officer </span><span class="s2">= </span><span class="s1">officer</span><span class="s2">,</span>
+                            <span class="s1">positionKey </span><span class="s2">= </span><span class="s1">breakPositionKey</span>
+                        <span class="s2">)</span>
+                    <span class="s2">)</span>
+                    <span class="s1">availableOfficersForTimeSlot</span><span class="s2">.</span><span class="s1">remove</span><span class="s2">(</span><span class="s1">officer</span><span class="s2">) </span><span class="s3">// Remove after break assignment</span>
+                <span class="s2">} </span><span class="s0">else </span><span class="s2">{</span>
+                    <span class="s1">Log</span><span class="s2">.</span><span class="s1">d</span><span class="s2">(</span><span class="s1">TAG</span><span class="s2">, </span><span class="s4">&quot;    Not assigning break to </span><span class="s0">${</span><span class="s1">officer</span><span class="s2">.</span><span class="s1">name</span><span class="s0">} </span><span class="s4">at </span><span class="s0">$</span><span class="s1">timeSlot</span><span class="s4">&quot;</span><span class="s2">) </span><span class="s3">// Log when not assigning</span>
+                <span class="s2">}</span>
+            <span class="s2">}</span>
+
+            <span class="s3">// --- Assign Regular Positions ---</span>
+            <span class="s1">Log</span><span class="s2">.</span><span class="s1">d</span><span class="s2">(</span><span class="s1">TAG</span><span class="s2">, </span><span class="s4">&quot;  Assigning regular positions. Available officers: </span><span class="s0">$</span><span class="s1">availableOfficersForTimeSlot</span><span class="s4">&quot;</span><span class="s2">)</span>
+            <span class="s0">for </span><span class="s2">(</span><span class="s1">officer </span><span class="s0">in </span><span class="s1">availableOfficersForTimeSlot</span><span class="s2">) { </span><span class="s3">// Iterate through *remaining* available officers</span>
+                <span class="s0">val </span><span class="s1">isAssigned </span><span class="s2">= </span><span class="s1">assignments</span><span class="s2">.</span><span class="s1">any</span><span class="s2">{ </span><span class="s1">it</span><span class="s2">.</span><span class="s1">officer </span><span class="s2">== </span><span class="s1">officer </span><span class="s2">&amp;&amp; </span><span class="s1">it</span><span class="s2">.</span><span class="s1">timeSlot </span><span class="s2">== </span><span class="s1">timeSlot</span><span class="s2">}</span>
+                <span class="s1">Log</span><span class="s2">.</span><span class="s1">d</span><span class="s2">(</span><span class="s1">TAG</span><span class="s2">, </span><span class="s4">&quot;    Checking officer: </span><span class="s0">${</span><span class="s1">officer</span><span class="s2">.</span><span class="s1">name</span><span class="s0">}</span><span class="s4">, Already Assigned: </span><span class="s0">$</span><span class="s1">isAssigned</span><span class="s4">&quot;</span><span class="s2">)</span>
+                <span class="s3">// Check Officer Start time</span>
+                <span class="s0">if</span><span class="s2">(!</span><span class="s1">isAssigned </span><span class="s2">&amp;&amp; </span><span class="s1">isOfficerAvailable</span><span class="s2">(</span><span class="s1">officer</span><span class="s2">, </span><span class="s1">timeSlot</span><span class="s2">)) {</span>
+                    <span class="s1">Log</span><span class="s2">.</span><span class="s1">d</span><span class="s2">(</span><span class="s1">TAG</span><span class="s2">, </span><span class="s4">&quot;      Officer </span><span class="s0">${</span><span class="s1">officer</span><span class="s2">.</span><span class="s1">name</span><span class="s0">} </span><span class="s4">is available for time slot </span><span class="s0">$</span><span class="s1">timeSlot</span><span class="s4">&quot;</span><span class="s2">)</span>
+                    <span class="s0">val </span><span class="s1">positionKey </span><span class="s2">=</span>
+                        <span class="s1">positionKeys</span><span class="s2">.</span><span class="s1">firstOrNull </span><span class="s2">{ !</span><span class="s1">it</span><span class="s2">.</span><span class="s1">isBreak </span><span class="s2">&amp;&amp; </span><span class="s1">canAssign</span><span class="s2">(</span><span class="s1">officer</span><span class="s2">, </span><span class="s1">it</span><span class="s2">) }</span>
+                    <span class="s0">if </span><span class="s2">(</span><span class="s1">positionKey </span><span class="s2">!= </span><span class="s0">null</span><span class="s2">) {</span>
+                        <span class="s1">Log</span><span class="s2">.</span><span class="s1">d</span><span class="s2">(</span><span class="s1">TAG</span><span class="s2">, </span><span class="s4">&quot;        Assigning position </span><span class="s0">${</span><span class="s1">positionKey</span><span class="s2">.</span><span class="s1">code</span><span class="s0">} </span><span class="s4">to </span><span class="s0">${</span><span class="s1">officer</span><span class="s2">.</span><span class="s1">name</span><span class="s0">} </span><span class="s4">at </span><span class="s0">$</span><span class="s1">timeSlot</span><span class="s4">&quot;</span><span class="s2">)</span>
+                        <span class="s1">assignments</span><span class="s2">.</span><span class="s1">add</span><span class="s2">(</span>
+                            <span class="s1">Assignment</span><span class="s2">(</span>
+                                <span class="s1">timeSlot </span><span class="s2">= </span><span class="s1">timeSlot</span><span class="s2">,</span>
+                                <span class="s1">officer </span><span class="s2">= </span><span class="s1">officer</span><span class="s2">,</span>
+                                <span class="s1">positionKey </span><span class="s2">= </span><span class="s1">positionKey</span>
+                            <span class="s2">)</span>
+                        <span class="s2">)</span>
+                    <span class="s2">} </span><span class="s0">else </span><span class="s2">{</span>
+                        <span class="s1">Log</span><span class="s2">.</span><span class="s1">d</span><span class="s2">(</span><span class="s1">TAG</span><span class="s2">, </span><span class="s4">&quot;        No valid position found for </span><span class="s0">${</span><span class="s1">officer</span><span class="s2">.</span><span class="s1">name</span><span class="s0">} </span><span class="s4">at </span><span class="s0">$</span><span class="s1">timeSlot</span><span class="s4">&quot;</span><span class="s2">) </span><span class="s3">// Log when no position is found</span>
+                    <span class="s2">}</span>
+                <span class="s2">} </span><span class="s0">else </span><span class="s2">{</span>
+                    <span class="s1">Log</span><span class="s2">.</span><span class="s1">d</span><span class="s2">(</span><span class="s1">TAG</span><span class="s2">, </span><span class="s4">&quot;     Officer </span><span class="s0">${</span><span class="s1">officer</span><span class="s2">.</span><span class="s1">name</span><span class="s0">} </span><span class="s4">NOT available for time slot </span><span class="s0">$</span><span class="s1">timeSlot</span><span class="s4">&quot;</span><span class="s2">)</span>
+                <span class="s2">}</span>
+            <span class="s2">}</span>
+        <span class="s2">}</span>
+        <span class="s1">Log</span><span class="s2">.</span><span class="s1">d</span><span class="s2">(</span><span class="s1">TAG</span><span class="s2">, </span><span class="s4">&quot;Final Assignments: </span><span class="s0">$</span><span class="s1">assignments</span><span class="s4">&quot;</span><span class="s2">)</span>
+        <span class="s0">return </span><span class="s1">assignments</span>
+    <span class="s2">}</span>
+    <span class="s1">private </span><span class="s0">fun </span><span class="s1">isOfficerAvailable</span><span class="s2">(</span><span class="s1">officer: Officer</span><span class="s2">, </span><span class="s1">timeSlot: String</span><span class="s2">)</span><span class="s1">: Boolean</span><span class="s2">{</span>
+        <span class="s0">val </span><span class="s1">sdf </span><span class="s2">= </span><span class="s1">SimpleDateFormat</span><span class="s2">(</span><span class="s4">&quot;HH:mm&quot;</span><span class="s2">, </span><span class="s1">Locale</span><span class="s2">.</span><span class="s1">getDefault</span><span class="s2">())</span>
+        <span class="s0">val </span><span class="s1">officerStartTime </span><span class="s2">= </span><span class="s1">sdf</span><span class="s2">.</span><span class="s1">parse</span><span class="s2">(</span><span class="s1">officer</span><span class="s2">.</span><span class="s1">startTime</span><span class="s2">)</span>
+        <span class="s0">val </span><span class="s1">slotTime </span><span class="s2">= </span><span class="s1">sdf</span><span class="s2">.</span><span class="s1">parse</span><span class="s2">(</span><span class="s1">timeSlot</span><span class="s2">)</span>
+
+        <span class="s0">val </span><span class="s1">officerStartCalendar </span><span class="s2">= </span><span class="s1">Calendar</span><span class="s2">.</span><span class="s1">getInstance</span><span class="s2">().</span><span class="s1">apply </span><span class="s2">{</span>
+            <span class="s1">time </span><span class="s2">= </span><span class="s1">officerStartTime</span><span class="s2">!!</span>
+        <span class="s2">}</span>
+
+        <span class="s0">val </span><span class="s1">slotCalendar </span><span class="s2">= </span><span class="s1">Calendar</span><span class="s2">.</span><span class="s1">getInstance</span><span class="s2">().</span><span class="s1">apply </span><span class="s2">{</span>
+            <span class="s1">time </span><span class="s2">= </span><span class="s1">slotTime</span><span class="s2">!!</span>
+        <span class="s2">}</span>
+        <span class="s0">val </span><span class="s1">isAvailable </span><span class="s2">= </span><span class="s1">slotCalendar</span><span class="s2">.</span><span class="s1">timeInMillis </span><span class="s2">&gt;= </span><span class="s1">officerStartCalendar</span><span class="s2">.</span><span class="s1">timeInMillis</span>
+        <span class="s1">Log</span><span class="s2">.</span><span class="s1">d</span><span class="s2">(</span><span class="s1">TAG</span><span class="s2">, </span><span class="s4">&quot;isOfficerAvailable(</span><span class="s0">${</span><span class="s1">officer</span><span class="s2">.</span><span class="s1">name</span><span class="s0">}</span><span class="s4">, </span><span class="s0">$</span><span class="s1">timeSlot</span><span class="s4">): </span><span class="s0">$</span><span class="s1">isAvailable</span><span class="s4">&quot;</span><span class="s2">) </span><span class="s3">// Log result</span>
+        <span class="s0">return </span><span class="s1">isAvailable</span>
+    <span class="s2">}</span>
+
+    <span class="s1">private </span><span class="s0">fun </span><span class="s1">generateTimeSlots</span><span class="s2">(</span><span class="s1">shiftSetting: ShiftSetting</span><span class="s2">)</span><span class="s1">: List</span><span class="s2">&lt;</span><span class="s1">String</span><span class="s2">&gt; {</span>
+        <span class="s0">val </span><span class="s1">timeSlots </span><span class="s2">= </span><span class="s1">mutableListOf</span><span class="s2">&lt;</span><span class="s1">String</span><span class="s2">&gt;()</span>
+        <span class="s0">val </span><span class="s1">sdf </span><span class="s2">= </span><span class="s1">SimpleDateFormat</span><span class="s2">(</span><span class="s4">&quot;HH:mm&quot;</span><span class="s2">, </span><span class="s1">Locale</span><span class="s2">.</span><span class="s1">getDefault</span><span class="s2">())</span>
+        <span class="s0">val </span><span class="s1">calendar </span><span class="s2">= </span><span class="s1">Calendar</span><span class="s2">.</span><span class="s1">getInstance</span><span class="s2">()</span>
+        <span class="s1">calendar</span><span class="s2">.</span><span class="s1">time </span><span class="s2">= </span><span class="s1">sdf</span><span class="s2">.</span><span class="s1">parse</span><span class="s2">(</span><span class="s1">shiftSetting</span><span class="s2">.</span><span class="s1">startTime</span><span class="s2">)!!</span>
+
+        <span class="s0">val </span><span class="s1">endTime </span><span class="s2">= </span><span class="s1">Calendar</span><span class="s2">.</span><span class="s1">getInstance</span><span class="s2">().</span><span class="s1">apply </span><span class="s2">{</span>
+            <span class="s1">time </span><span class="s2">= </span><span class="s1">calendar</span><span class="s2">.</span><span class="s1">time</span>
+            <span class="s1">add</span><span class="s2">(</span><span class="s1">Calendar</span><span class="s2">.</span><span class="s1">HOUR</span><span class="s2">, </span><span class="s5">8</span><span class="s2">) </span><span class="s3">// Generate slots for 8 hours</span>
+        <span class="s2">}</span>
+        <span class="s1">Log</span><span class="s2">.</span><span class="s1">d</span><span class="s2">(</span><span class="s1">TAG</span><span class="s2">, </span><span class="s4">&quot;generateTimeSlots: Start Time = </span><span class="s0">${</span><span class="s1">shiftSetting</span><span class="s2">.</span><span class="s1">startTime</span><span class="s0">}</span><span class="s4">, Interval = </span><span class="s0">${</span><span class="s1">shiftSetting</span><span class="s2">.</span><span class="s1">interval</span><span class="s0">}</span><span class="s4">, End Time = </span><span class="s0">${</span><span class="s1">sdf</span><span class="s2">.</span><span class="s1">format</span><span class="s2">(</span><span class="s1">endTime</span><span class="s2">.</span><span class="s1">time</span><span class="s2">)</span><span class="s0">}</span><span class="s4">&quot;</span><span class="s2">)</span>
+
+
+        <span class="s0">while </span><span class="s2">(</span><span class="s1">calendar</span><span class="s2">.</span><span class="s1">before</span><span class="s2">(</span><span class="s1">endTime</span><span class="s2">)) {</span>
+            <span class="s1">timeSlots</span><span class="s2">.</span><span class="s1">add</span><span class="s2">(</span><span class="s1">sdf</span><span class="s2">.</span><span class="s1">format</span><span class="s2">(</span><span class="s1">calendar</span><span class="s2">.</span><span class="s1">time</span><span class="s2">))</span>
+            <span class="s1">calendar</span><span class="s2">.</span><span class="s1">add</span><span class="s2">(</span><span class="s1">Calendar</span><span class="s2">.</span><span class="s1">MINUTE</span><span class="s2">, </span><span class="s1">shiftSetting</span><span class="s2">.</span><span class="s1">interval</span><span class="s2">)</span>
+        <span class="s2">}</span>
+
+        <span class="s0">return </span><span class="s1">timeSlots</span>
+    <span class="s2">}</span>
+
+    <span class="s1">private </span><span class="s0">fun </span><span class="s1">calculateBreakTimes</span><span class="s2">(</span><span class="s1">officer: Officer</span><span class="s2">, </span><span class="s1">shiftSetting: ShiftSetting</span><span class="s2">)</span><span class="s1">: List</span><span class="s2">&lt;</span><span class="s1">String</span><span class="s2">&gt; {</span>
+        <span class="s0">val </span><span class="s1">breakTimes </span><span class="s2">= </span><span class="s1">mutableListOf</span><span class="s2">&lt;</span><span class="s1">String</span><span class="s2">&gt;()</span>
+        <span class="s0">val </span><span class="s1">sdf </span><span class="s2">= </span><span class="s1">SimpleDateFormat</span><span class="s2">(</span><span class="s4">&quot;HH:mm&quot;</span><span class="s2">, </span><span class="s1">Locale</span><span class="s2">.</span><span class="s1">getDefault</span><span class="s2">())</span>
+        <span class="s0">val </span><span class="s1">startTime </span><span class="s2">= </span><span class="s1">sdf</span><span class="s2">.</span><span class="s1">parse</span><span class="s2">(</span><span class="s1">officer</span><span class="s2">.</span><span class="s1">startTime</span><span class="s2">) </span><span class="s1">?: </span><span class="s0">return </span><span class="s1">breakTimes</span>
+        <span class="s0">val </span><span class="s1">startCalendar </span><span class="s2">= </span><span class="s1">Calendar</span><span class="s2">.</span><span class="s1">getInstance</span><span class="s2">() </span><span class="s3">// Corrected instance creation</span>
+        <span class="s1">startCalendar</span><span class="s2">.</span><span class="s1">time </span><span class="s2">= </span><span class="s1">startTime</span>
+        <span class="s1">Log</span><span class="s2">.</span><span class="s1">d</span><span class="s2">(</span><span class="s1">TAG</span><span class="s2">, </span><span class="s4">&quot;calculateBreakTimes for </span><span class="s0">${</span><span class="s1">officer</span><span class="s2">.</span><span class="s1">name</span><span class="s0">}</span><span class="s4">, Start Time: </span><span class="s0">${</span><span class="s1">officer</span><span class="s2">.</span><span class="s1">startTime</span><span class="s0">}</span><span class="s4">, isFullTime: </span><span class="s0">${</span><span class="s1">officer</span><span class="s2">.</span><span class="s1">isFullTime</span><span class="s0">}</span><span class="s4">&quot;</span><span class="s2">)</span>
+
+
+        <span class="s0">if </span><span class="s2">(</span><span class="s1">officer</span><span class="s2">.</span><span class="s1">isFullTime</span><span class="s2">) {</span>
+            <span class="s3">// 15-30-15 pattern</span>
+            <span class="s0">val </span><span class="s1">break1 </span><span class="s2">= (</span><span class="s1">startCalendar</span><span class="s2">.</span><span class="s1">clone</span><span class="s2">() </span><span class="s0">as </span><span class="s1">Calendar</span><span class="s2">).</span><span class="s1">apply </span><span class="s2">{ </span><span class="s1">add</span><span class="s2">(</span><span class="s1">Calendar</span><span class="s2">.</span><span class="s1">MINUTE</span><span class="s2">, </span><span class="s1">shiftSetting</span><span class="s2">.</span><span class="s1">interval </span><span class="s2">* </span><span class="s5">2</span><span class="s2">) }</span>
+            <span class="s0">val </span><span class="s1">break2 </span><span class="s2">= (</span><span class="s1">startCalendar</span><span class="s2">.</span><span class="s1">clone</span><span class="s2">() </span><span class="s0">as </span><span class="s1">Calendar</span><span class="s2">).</span><span class="s1">apply </span><span class="s2">{ </span><span class="s1">add</span><span class="s2">(</span><span class="s1">Calendar</span><span class="s2">.</span><span class="s1">HOUR</span><span class="s2">, </span><span class="s5">4</span><span class="s2">) }</span>
+            <span class="s0">val </span><span class="s1">break3 </span><span class="s2">= (</span><span class="s1">startCalendar</span><span class="s2">.</span><span class="s1">clone</span><span class="s2">() </span><span class="s0">as </span><span class="s1">Calendar</span><span class="s2">).</span><span class="s1">apply </span><span class="s2">{ </span><span class="s1">add</span><span class="s2">(</span><span class="s1">Calendar</span><span class="s2">.</span><span class="s1">HOUR</span><span class="s2">, </span><span class="s5">7</span><span class="s2">) }</span>
+
+
+            <span class="s1">breakTimes</span><span class="s2">.</span><span class="s1">add</span><span class="s2">(</span><span class="s1">sdf</span><span class="s2">.</span><span class="s1">format</span><span class="s2">(</span><span class="s1">break1</span><span class="s2">.</span><span class="s1">time</span><span class="s2">))</span>
+            <span class="s1">breakTimes</span><span class="s2">.</span><span class="s1">add</span><span class="s2">(</span><span class="s1">sdf</span><span class="s2">.</span><span class="s1">format</span><span class="s2">(</span><span class="s1">break2</span><span class="s2">.</span><span class="s1">time</span><span class="s2">))</span>
+            <span class="s1">breakTimes</span><span class="s2">.</span><span class="s1">add</span><span class="s2">(</span><span class="s1">sdf</span><span class="s2">.</span><span class="s1">format</span><span class="s2">(</span><span class="s1">break3</span><span class="s2">.</span><span class="s1">time</span><span class="s2">))</span>
+            <span class="s1">Log</span><span class="s2">.</span><span class="s1">d</span><span class="s2">(</span><span class="s1">TAG</span><span class="s2">, </span><span class="s4">&quot;  Full-time breaks: </span><span class="s0">${</span><span class="s1">breakTimes</span><span class="s2">.</span><span class="s1">joinToString</span><span class="s2">()</span><span class="s0">}</span><span class="s4">&quot;</span><span class="s2">)</span>
+
+
+        <span class="s2">} </span><span class="s0">else </span><span class="s2">{</span>
+            <span class="s3">// Single 15-minute break</span>
+            <span class="s0">val </span><span class="s1">break1 </span><span class="s2">= (</span><span class="s1">startCalendar</span><span class="s2">.</span><span class="s1">clone</span><span class="s2">() </span><span class="s0">as </span><span class="s1">Calendar</span><span class="s2">).</span><span class="s1">apply </span><span class="s2">{ </span><span class="s1">add</span><span class="s2">(</span><span class="s1">Calendar</span><span class="s2">.</span><span class="s1">HOUR</span><span class="s2">, </span><span class="s5">2</span><span class="s2">) }</span>
+            <span class="s1">breakTimes</span><span class="s2">.</span><span class="s1">add</span><span class="s2">(</span><span class="s1">sdf</span><span class="s2">.</span><span class="s1">format</span><span class="s2">(</span><span class="s1">break1</span><span class="s2">.</span><span class="s1">time</span><span class="s2">))</span>
+            <span class="s1">Log</span><span class="s2">.</span><span class="s1">d</span><span class="s2">(</span><span class="s1">TAG</span><span class="s2">, </span><span class="s4">&quot; Part-time break: </span><span class="s0">${</span><span class="s1">breakTimes</span><span class="s2">.</span><span class="s1">joinToString</span><span class="s2">()</span><span class="s0">}</span><span class="s4">&quot;</span><span class="s2">)</span>
+        <span class="s2">}</span>
+
+        <span class="s0">return </span><span class="s1">breakTimes</span>
+    <span class="s2">}</span>
+
+
+    <span class="s1">private </span><span class="s0">fun </span><span class="s1">canAssign</span><span class="s2">(</span><span class="s1">officer: Officer</span><span class="s2">, </span><span class="s1">positionKey: PositionKey</span><span class="s2">)</span><span class="s1">: Boolean </span><span class="s2">{</span>
+        <span class="s3">// Check Certifications (for now, just a basic check)</span>
+        <span class="s0">val </span><span class="s1">canAssign </span><span class="s2">= </span><span class="s1">officer</span><span class="s2">.</span><span class="s1">certifications</span><span class="s2">.</span><span class="s1">contains</span><span class="s2">(</span><span class="s1">positionKey</span><span class="s2">.</span><span class="s1">code</span><span class="s2">)</span>
+        <span class="s1">Log</span><span class="s2">.</span><span class="s1">d</span><span class="s2">(</span><span class="s1">TAG</span><span class="s2">, </span><span class="s4">&quot;canAssign(</span><span class="s0">${</span><span class="s1">officer</span><span class="s2">.</span><span class="s1">name</span><span class="s0">}</span><span class="s4">, </span><span class="s0">${</span><span class="s1">positionKey</span><span class="s2">.</span><span class="s1">code</span><span class="s0">}</span><span class="s4">): </span><span class="s0">$</span><span class="s1">canAssign </span><span class="s4">(Officer Certs: </span><span class="s0">${</span><span class="s1">officer</span><span class="s2">.</span><span class="s1">certifications</span><span class="s0">}</span><span class="s4">)&quot;</span><span class="s2">)</span>
+        <span class="s0">return </span><span class="s1">canAssign</span>
+    <span class="s2">}</span>
+<span class="s2">}</span></pre>
+</body>
+</html>

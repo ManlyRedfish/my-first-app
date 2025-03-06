@@ -1,0 +1,408 @@
+<html>
+<head>
+<title>PdfGenerator.kt</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<style type="text/css">
+.s0 { color: #7a7e85;}
+.s1 { color: #bcbec4;}
+.s2 { color: #cf8e6d;}
+.s3 { color: #bcbec4;}
+.s4 { color: #2aacb8;}
+.s5 { color: #6aab73;}
+</style>
+</head>
+<body bgcolor="#1e1f22">
+<table CELLSPACING=0 CELLPADDING=5 COLS=1 WIDTH="100%" BGCOLOR="#606060" >
+<tr><td><center>
+<font face="Arial, Helvetica" color="#000000">
+PdfGenerator.kt</font>
+</center></td></tr></table>
+<pre><span class="s0">// File: pdf/PdfGenerator.kt</span>
+<span class="s2">package </span><span class="s1">com</span><span class="s3">.</span><span class="s1">example</span><span class="s3">.</span><span class="s1">rotationappv10</span><span class="s3">.</span><span class="s1">pdf</span>
+
+<span class="s1">import android</span><span class="s3">.</span><span class="s1">content</span><span class="s3">.</span><span class="s1">Context</span>
+<span class="s1">import android</span><span class="s3">.</span><span class="s1">graphics</span><span class="s3">.</span><span class="s1">Bitmap</span>
+<span class="s1">import android</span><span class="s3">.</span><span class="s1">graphics</span><span class="s3">.</span><span class="s1">Canvas</span>
+<span class="s1">import android</span><span class="s3">.</span><span class="s1">graphics</span><span class="s3">.</span><span class="s1">Color</span>
+<span class="s1">import android</span><span class="s3">.</span><span class="s1">graphics</span><span class="s3">.</span><span class="s1">Paint</span>
+<span class="s1">import android</span><span class="s3">.</span><span class="s1">graphics</span><span class="s3">.</span><span class="s1">Typeface</span>
+<span class="s1">import android</span><span class="s3">.</span><span class="s1">graphics</span><span class="s3">.</span><span class="s1">pdf</span><span class="s3">.</span><span class="s1">PdfDocument</span>
+<span class="s1">import android</span><span class="s3">.</span><span class="s1">os</span><span class="s3">.</span><span class="s1">Build</span>
+<span class="s1">import android</span><span class="s3">.</span><span class="s1">os</span><span class="s3">.</span><span class="s1">Environment</span>
+<span class="s1">import android</span><span class="s3">.</span><span class="s1">util</span><span class="s3">.</span><span class="s1">Log</span>
+<span class="s1">import androidx</span><span class="s3">.</span><span class="s1">annotation</span><span class="s3">.</span><span class="s1">RequiresApi</span>
+<span class="s1">import androidx</span><span class="s3">.</span><span class="s1">core</span><span class="s3">.</span><span class="s1">content</span><span class="s3">.</span><span class="s1">ContextCompat</span>
+<span class="s1">import androidx</span><span class="s3">.</span><span class="s1">core</span><span class="s3">.</span><span class="s1">graphics</span><span class="s3">.</span><span class="s1">drawable</span><span class="s3">.</span><span class="s1">toBitmap</span>
+<span class="s1">import com</span><span class="s3">.</span><span class="s1">example</span><span class="s3">.</span><span class="s1">rotationappv10</span><span class="s3">.</span><span class="s1">R</span>
+<span class="s1">import com</span><span class="s3">.</span><span class="s1">example</span><span class="s3">.</span><span class="s1">rotationappv10</span><span class="s3">.</span><span class="s1">data</span><span class="s3">.</span><span class="s1">model</span><span class="s3">.</span><span class="s1">Assignment</span>
+<span class="s1">import com</span><span class="s3">.</span><span class="s1">example</span><span class="s3">.</span><span class="s1">rotationappv10</span><span class="s3">.</span><span class="s1">data</span><span class="s3">.</span><span class="s1">model</span><span class="s3">.</span><span class="s1">PositionKey</span>
+<span class="s1">import com</span><span class="s3">.</span><span class="s1">example</span><span class="s3">.</span><span class="s1">rotationappv10</span><span class="s3">.</span><span class="s1">data</span><span class="s3">.</span><span class="s1">model</span><span class="s3">.</span><span class="s1">RotationSheet</span>
+<span class="s1">import java</span><span class="s3">.</span><span class="s1">io</span><span class="s3">.</span><span class="s1">File</span>
+<span class="s1">import java</span><span class="s3">.</span><span class="s1">io</span><span class="s3">.</span><span class="s1">FileOutputStream</span>
+<span class="s1">import java</span><span class="s3">.</span><span class="s1">io</span><span class="s3">.</span><span class="s1">IOException</span>
+<span class="s1">import kotlin</span><span class="s3">.</span><span class="s1">math</span><span class="s3">.</span><span class="s1">hypot  </span><span class="s0">// Import hypot</span>
+<span class="s1">import java</span><span class="s3">.</span><span class="s1">util</span><span class="s3">.</span><span class="s1">Calendar </span><span class="s0">// Import Calendar</span>
+<span class="s1">import kotlin</span><span class="s3">.</span><span class="s1">math</span><span class="s3">.</span><span class="s1">min</span>
+
+<span class="s2">class </span><span class="s1">PdfGenerator</span><span class="s3">(</span><span class="s1">private </span><span class="s2">val </span><span class="s1">context: Context</span><span class="s3">) {</span>
+
+    <span class="s1">@RequiresApi</span><span class="s3">(</span><span class="s1">Build</span><span class="s3">.</span><span class="s1">VERSION_CODES</span><span class="s3">.</span><span class="s1">Q</span><span class="s3">)</span>
+    <span class="s2">fun </span><span class="s1">generatePdf</span><span class="s3">(</span>
+        <span class="s1">rotationSheet: RotationSheet</span><span class="s3">,</span>
+        <span class="s1">positionKeys: List</span><span class="s3">&lt;</span><span class="s1">PositionKey</span><span class="s3">&gt;,</span>
+        <span class="s1">checkpoint: String</span><span class="s3">,</span>
+        <span class="s1">lane: String</span><span class="s3">,</span>
+        <span class="s1">lead: String</span><span class="s3">,</span>
+        <span class="s1">supervisor: String</span><span class="s3">,</span>
+        <span class="s1">date: String</span><span class="s3">, </span><span class="s0">// Pass date explicitly</span>
+        <span class="s1">shift: String</span><span class="s3">, </span><span class="s0">//Pass shift explicitly</span>
+        <span class="s1">blankDate: Boolean</span>
+
+    <span class="s3">)</span><span class="s1">: File? </span><span class="s3">{</span>
+        <span class="s2">val </span><span class="s1">page1Width </span><span class="s3">= </span><span class="s4">612 </span><span class="s0">//8.5 * 72</span>
+        <span class="s2">val </span><span class="s1">page1Height </span><span class="s3">= </span><span class="s4">792 </span><span class="s0">//11 * 72</span>
+
+        <span class="s2">val </span><span class="s1">document </span><span class="s3">= </span><span class="s1">PdfDocument</span><span class="s3">()</span>
+        <span class="s2">val </span><span class="s1">page1Info </span><span class="s3">= </span><span class="s1">PdfDocument</span><span class="s3">.</span><span class="s1">PageInfo</span><span class="s3">.</span><span class="s1">Builder</span><span class="s3">(</span><span class="s1">page1Width</span><span class="s3">, </span><span class="s1">page1Height</span><span class="s3">, </span><span class="s4">1</span><span class="s3">).</span><span class="s1">create</span><span class="s3">()</span>
+        <span class="s2">val </span><span class="s1">page1 </span><span class="s3">= </span><span class="s1">document</span><span class="s3">.</span><span class="s1">startPage</span><span class="s3">(</span><span class="s1">page1Info</span><span class="s3">)</span>
+        <span class="s2">val </span><span class="s1">canvas1: Canvas </span><span class="s3">= </span><span class="s1">page1</span><span class="s3">.</span><span class="s1">canvas</span>
+
+        <span class="s0">// --- Paints for different text styles ---</span>
+        <span class="s2">val </span><span class="s1">titlePaint </span><span class="s3">= </span><span class="s1">Paint</span><span class="s3">().</span><span class="s1">apply </span><span class="s3">{</span>
+            <span class="s1">typeface </span><span class="s3">= </span><span class="s1">Typeface</span><span class="s3">.</span><span class="s1">create</span><span class="s3">(</span><span class="s1">Typeface</span><span class="s3">.</span><span class="s1">DEFAULT</span><span class="s3">, </span><span class="s1">Typeface</span><span class="s3">.</span><span class="s1">BOLD</span><span class="s3">)</span>
+            <span class="s1">textSize </span><span class="s3">= </span><span class="s4">16f</span>
+            <span class="s1">color </span><span class="s3">= </span><span class="s1">Color</span><span class="s3">.</span><span class="s1">BLACK</span>
+            <span class="s1">textAlign </span><span class="s3">= </span><span class="s1">Paint</span><span class="s3">.</span><span class="s1">Align</span><span class="s3">.</span><span class="s1">CENTER</span>
+        <span class="s3">}</span>
+
+        <span class="s2">val </span><span class="s1">headerPaint </span><span class="s3">= </span><span class="s1">Paint</span><span class="s3">().</span><span class="s1">apply </span><span class="s3">{</span>
+            <span class="s1">typeface </span><span class="s3">= </span><span class="s1">Typeface</span><span class="s3">.</span><span class="s1">DEFAULT</span>
+            <span class="s1">textSize </span><span class="s3">= </span><span class="s4">12f</span>
+            <span class="s1">color </span><span class="s3">= </span><span class="s1">Color</span><span class="s3">.</span><span class="s1">BLACK</span>
+        <span class="s3">}</span>
+
+        <span class="s2">val </span><span class="s1">underlinePaint </span><span class="s3">= </span><span class="s1">Paint</span><span class="s3">().</span><span class="s1">apply </span><span class="s3">{</span>
+            <span class="s1">strokeWidth </span><span class="s3">= </span><span class="s4">1f</span>
+            <span class="s1">color </span><span class="s3">= </span><span class="s1">Color</span><span class="s3">.</span><span class="s1">BLACK</span>
+        <span class="s3">}</span>
+
+        <span class="s2">val </span><span class="s1">tableHeaderPaint </span><span class="s3">= </span><span class="s1">Paint</span><span class="s3">().</span><span class="s1">apply </span><span class="s3">{</span>
+            <span class="s1">typeface </span><span class="s3">= </span><span class="s1">Typeface</span><span class="s3">.</span><span class="s1">create</span><span class="s3">(</span><span class="s1">Typeface</span><span class="s3">.</span><span class="s1">DEFAULT</span><span class="s3">, </span><span class="s1">Typeface</span><span class="s3">.</span><span class="s1">BOLD</span><span class="s3">)</span>
+            <span class="s1">textSize </span><span class="s3">= </span><span class="s4">10f</span>
+            <span class="s1">color </span><span class="s3">= </span><span class="s1">Color</span><span class="s3">.</span><span class="s1">BLACK</span>
+            <span class="s1">textAlign </span><span class="s3">= </span><span class="s1">Paint</span><span class="s3">.</span><span class="s1">Align</span><span class="s3">.</span><span class="s1">CENTER</span>
+        <span class="s3">}</span>
+
+        <span class="s2">val </span><span class="s1">tableTextPaint </span><span class="s3">= </span><span class="s1">Paint</span><span class="s3">().</span><span class="s1">apply </span><span class="s3">{</span>
+            <span class="s1">typeface </span><span class="s3">= </span><span class="s1">Typeface</span><span class="s3">.</span><span class="s1">DEFAULT</span>
+            <span class="s1">textSize </span><span class="s3">= </span><span class="s4">10f</span>
+            <span class="s1">color </span><span class="s3">= </span><span class="s1">Color</span><span class="s3">.</span><span class="s1">BLACK</span>
+            <span class="s1">textAlign </span><span class="s3">= </span><span class="s1">Paint</span><span class="s3">.</span><span class="s1">Align</span><span class="s3">.</span><span class="s1">LEFT</span>
+        <span class="s3">}</span>
+        <span class="s2">val </span><span class="s1">tableTextPaintCenter </span><span class="s3">= </span><span class="s1">Paint</span><span class="s3">().</span><span class="s1">apply </span><span class="s3">{</span>
+            <span class="s1">typeface </span><span class="s3">= </span><span class="s1">Typeface</span><span class="s3">.</span><span class="s1">DEFAULT</span>
+            <span class="s1">textSize </span><span class="s3">= </span><span class="s4">10f</span>
+            <span class="s1">color </span><span class="s3">= </span><span class="s1">Color</span><span class="s3">.</span><span class="s1">BLACK</span>
+            <span class="s1">textAlign </span><span class="s3">= </span><span class="s1">Paint</span><span class="s3">.</span><span class="s1">Align</span><span class="s3">.</span><span class="s1">CENTER</span>
+        <span class="s3">}</span>
+        <span class="s0">// --- Logo (Example with VectorDrawable) ---</span>
+        <span class="s2">val </span><span class="s1">logoBitmap </span><span class="s3">= </span><span class="s1">getLogoBitmapFromVectorDrawable</span><span class="s3">(</span><span class="s1">R</span><span class="s3">.</span><span class="s1">drawable</span><span class="s3">.</span><span class="s1">transportation_security_administration_logo</span><span class="s3">) </span><span class="s0">// Replace with your actual logo</span>
+        <span class="s2">if </span><span class="s3">(</span><span class="s1">logoBitmap </span><span class="s3">!= </span><span class="s2">null</span><span class="s3">) {</span>
+            <span class="s2">val </span><span class="s1">scaledLogo </span><span class="s3">= </span><span class="s1">Bitmap</span><span class="s3">.</span><span class="s1">createScaledBitmap</span><span class="s3">(</span><span class="s1">logoBitmap</span><span class="s3">, </span><span class="s4">100</span><span class="s3">, </span><span class="s4">30</span><span class="s3">, </span><span class="s2">false</span><span class="s3">)  </span><span class="s0">//Adjust size</span>
+            <span class="s1">canvas1</span><span class="s3">.</span><span class="s1">drawBitmap</span><span class="s3">(</span><span class="s1">scaledLogo</span><span class="s3">, </span><span class="s4">20f</span><span class="s3">, </span><span class="s4">20f</span><span class="s3">, </span><span class="s2">null</span><span class="s3">) </span><span class="s0">//Adjust position.</span>
+            <span class="s1">logoBitmap</span><span class="s3">.</span><span class="s1">recycle</span><span class="s3">() </span><span class="s0">// Important to recycle the original Bitmap</span>
+            <span class="s1">scaledLogo</span><span class="s3">.</span><span class="s1">recycle</span><span class="s3">()</span>
+        <span class="s3">}</span>
+
+        <span class="s0">// --- Header Text ---</span>
+        <span class="s1">canvas1</span><span class="s3">.</span><span class="s1">drawText</span><span class="s3">(</span><span class="s5">&quot;Transportation Security Administration&quot;</span><span class="s3">, </span><span class="s1">page1Width </span><span class="s3">/ </span><span class="s4">2f</span><span class="s3">, </span><span class="s4">30f</span><span class="s3">, </span><span class="s1">titlePaint</span><span class="s3">)</span>
+        <span class="s1">canvas1</span><span class="s3">.</span><span class="s1">drawText</span><span class="s3">(</span><span class="s5">&quot;TEAM BRADLEY (BDL)&quot;</span><span class="s3">, </span><span class="s1">page1Width </span><span class="s3">/ </span><span class="s4">2f</span><span class="s3">, </span><span class="s4">50f</span><span class="s3">, </span><span class="s1">titlePaint</span><span class="s3">)</span>
+        <span class="s1">canvas1</span><span class="s3">.</span><span class="s1">drawText</span><span class="s3">(</span><span class="s5">&quot;LANE ROTATION SHEET&quot;</span><span class="s3">, </span><span class="s1">page1Width </span><span class="s3">/ </span><span class="s4">2f</span><span class="s3">, </span><span class="s4">70f</span><span class="s3">, </span><span class="s1">titlePaint</span><span class="s3">)</span>
+        <span class="s1">canvas1</span><span class="s3">.</span><span class="s1">drawText</span><span class="s3">(</span><span class="s5">&quot;TSABDL-F1330-16-A1-12&quot;</span><span class="s3">, </span><span class="s1">page1Width </span><span class="s3">/ </span><span class="s4">2f</span><span class="s3">, </span><span class="s4">90f</span><span class="s3">, </span><span class="s1">titlePaint</span><span class="s3">)</span>
+
+        <span class="s0">// --- Underlined Fields ---</span>
+        <span class="s2">val </span><span class="s1">startX </span><span class="s3">= </span><span class="s4">20f</span>
+        <span class="s2">var </span><span class="s1">startY </span><span class="s3">= </span><span class="s4">110f</span>
+        <span class="s2">val </span><span class="s1">lineHeight </span><span class="s3">= </span><span class="s4">20f</span>
+        <span class="s2">val </span><span class="s1">labelSpacing </span><span class="s3">= </span><span class="s4">5f </span><span class="s0">// Space between label and field</span>
+
+        <span class="s2">if</span><span class="s3">(</span><span class="s1">blankDate</span><span class="s3">){</span>
+            <span class="s1">canvas1</span><span class="s3">.</span><span class="s1">drawText</span><span class="s3">(</span><span class="s5">&quot;DATE:&quot;</span><span class="s3">, </span><span class="s1">startX</span><span class="s3">, </span><span class="s1">startY</span><span class="s3">, </span><span class="s1">headerPaint</span><span class="s3">)</span>
+            <span class="s1">canvas1</span><span class="s3">.</span><span class="s1">drawLine</span><span class="s3">(</span><span class="s1">startX </span><span class="s3">+ </span><span class="s1">headerPaint</span><span class="s3">.</span><span class="s1">measureText</span><span class="s3">(</span><span class="s5">&quot;DATE:&quot;</span><span class="s3">) + </span><span class="s1">labelSpacing</span><span class="s3">, </span><span class="s1">startY </span><span class="s3">+ </span><span class="s4">2</span><span class="s3">, </span><span class="s1">startX </span><span class="s3">+ </span><span class="s4">150</span><span class="s3">, </span><span class="s1">startY </span><span class="s3">+ </span><span class="s4">2</span><span class="s3">, </span><span class="s1">underlinePaint</span><span class="s3">)</span>
+        <span class="s3">}</span>
+        <span class="s2">else</span><span class="s3">{</span>
+            <span class="s1">canvas1</span><span class="s3">.</span><span class="s1">drawText</span><span class="s3">(</span><span class="s5">&quot;DATE: </span><span class="s2">$</span><span class="s1">date</span><span class="s5">&quot;</span><span class="s3">, </span><span class="s1">startX</span><span class="s3">, </span><span class="s1">startY</span><span class="s3">, </span><span class="s1">headerPaint</span><span class="s3">)</span>
+            <span class="s1">canvas1</span><span class="s3">.</span><span class="s1">drawLine</span><span class="s3">(</span><span class="s1">startX </span><span class="s3">+ </span><span class="s1">headerPaint</span><span class="s3">.</span><span class="s1">measureText</span><span class="s3">(</span><span class="s5">&quot;DATE: </span><span class="s2">$</span><span class="s1">date</span><span class="s5">&quot;</span><span class="s3">) + </span><span class="s1">labelSpacing</span><span class="s3">, </span><span class="s1">startY </span><span class="s3">+ </span><span class="s4">2</span><span class="s3">, </span><span class="s1">startX </span><span class="s3">+ </span><span class="s4">150</span><span class="s3">, </span><span class="s1">startY </span><span class="s3">+ </span><span class="s4">2</span><span class="s3">, </span><span class="s1">underlinePaint</span><span class="s3">)</span>
+        <span class="s3">}</span>
+
+        <span class="s1">canvas1</span><span class="s3">.</span><span class="s1">drawText</span><span class="s3">(</span><span class="s5">&quot;Shift: </span><span class="s2">$</span><span class="s1">shift</span><span class="s5">&quot;</span><span class="s3">, </span><span class="s1">startX </span><span class="s3">+ </span><span class="s4">160</span><span class="s3">, </span><span class="s1">startY</span><span class="s3">, </span><span class="s1">headerPaint</span><span class="s3">)</span>
+        <span class="s1">canvas1</span><span class="s3">.</span><span class="s1">drawLine</span><span class="s3">(</span><span class="s1">startX </span><span class="s3">+ </span><span class="s4">160 </span><span class="s3">+ </span><span class="s1">headerPaint</span><span class="s3">.</span><span class="s1">measureText</span><span class="s3">(</span><span class="s5">&quot;Shift: </span><span class="s2">$</span><span class="s1">shift</span><span class="s5">&quot;</span><span class="s3">) + </span><span class="s1">labelSpacing</span><span class="s3">, </span><span class="s1">startY </span><span class="s3">+ </span><span class="s4">2</span><span class="s3">, </span><span class="s1">startX </span><span class="s3">+ </span><span class="s4">160 </span><span class="s3">+ </span><span class="s4">150</span><span class="s3">, </span><span class="s1">startY </span><span class="s3">+ </span><span class="s4">2</span><span class="s3">, </span><span class="s1">underlinePaint</span><span class="s3">)</span>
+
+        <span class="s1">startY </span><span class="s3">+= </span><span class="s1">lineHeight</span>
+        <span class="s1">canvas1</span><span class="s3">.</span><span class="s1">drawText</span><span class="s3">(</span><span class="s5">&quot;CHECKPOINT:&quot;</span><span class="s3">, </span><span class="s1">startX</span><span class="s3">, </span><span class="s1">startY</span><span class="s3">, </span><span class="s1">headerPaint</span><span class="s3">)</span>
+        <span class="s1">canvas1</span><span class="s3">.</span><span class="s1">drawLine</span><span class="s3">(</span><span class="s1">startX </span><span class="s3">+ </span><span class="s1">headerPaint</span><span class="s3">.</span><span class="s1">measureText</span><span class="s3">(</span><span class="s5">&quot;CHECKPOINT:&quot;</span><span class="s3">) + </span><span class="s1">labelSpacing</span><span class="s3">, </span><span class="s1">startY </span><span class="s3">+ </span><span class="s4">2</span><span class="s3">, </span><span class="s1">startX </span><span class="s3">+ </span><span class="s4">150</span><span class="s3">, </span><span class="s1">startY </span><span class="s3">+ </span><span class="s4">2</span><span class="s3">, </span><span class="s1">underlinePaint</span><span class="s3">)</span>
+        <span class="s1">canvas1</span><span class="s3">.</span><span class="s1">drawText</span><span class="s3">(</span><span class="s1">checkpoint</span><span class="s3">, </span><span class="s1">startX </span><span class="s3">+ </span><span class="s1">headerPaint</span><span class="s3">.</span><span class="s1">measureText</span><span class="s3">(</span><span class="s5">&quot;CHECKPOINT:&quot;</span><span class="s3">) + </span><span class="s1">labelSpacing </span><span class="s3">+ </span><span class="s4">5</span><span class="s3">, </span><span class="s1">startY</span><span class="s3">, </span><span class="s1">headerPaint</span><span class="s3">) </span><span class="s0">// Show the checkpoint</span>
+
+        <span class="s1">canvas1</span><span class="s3">.</span><span class="s1">drawText</span><span class="s3">(</span><span class="s5">&quot;LANE:&quot;</span><span class="s3">, </span><span class="s1">startX </span><span class="s3">+ </span><span class="s4">160</span><span class="s3">, </span><span class="s1">startY</span><span class="s3">, </span><span class="s1">headerPaint</span><span class="s3">)</span>
+        <span class="s1">canvas1</span><span class="s3">.</span><span class="s1">drawLine</span><span class="s3">(</span><span class="s1">startX </span><span class="s3">+ </span><span class="s4">160 </span><span class="s3">+ </span><span class="s1">headerPaint</span><span class="s3">.</span><span class="s1">measureText</span><span class="s3">(</span><span class="s5">&quot;LANE:&quot;</span><span class="s3">) + </span><span class="s1">labelSpacing</span><span class="s3">, </span><span class="s1">startY </span><span class="s3">+ </span><span class="s4">2</span><span class="s3">, </span><span class="s1">startX </span><span class="s3">+ </span><span class="s4">160 </span><span class="s3">+ </span><span class="s4">150</span><span class="s3">, </span><span class="s1">startY </span><span class="s3">+ </span><span class="s4">2</span><span class="s3">, </span><span class="s1">underlinePaint</span><span class="s3">)</span>
+        <span class="s1">canvas1</span><span class="s3">.</span><span class="s1">drawText</span><span class="s3">(</span><span class="s1">lane</span><span class="s3">, </span><span class="s1">startX </span><span class="s3">+ </span><span class="s4">160 </span><span class="s3">+ </span><span class="s1">headerPaint</span><span class="s3">.</span><span class="s1">measureText</span><span class="s3">(</span><span class="s5">&quot;LANE:&quot;</span><span class="s3">) + </span><span class="s1">labelSpacing </span><span class="s3">+ </span><span class="s4">5</span><span class="s3">, </span><span class="s1">startY</span><span class="s3">, </span><span class="s1">headerPaint</span><span class="s3">) </span><span class="s0">//Show the lane</span>
+
+
+        <span class="s1">startY </span><span class="s3">+= </span><span class="s1">lineHeight</span>
+        <span class="s1">canvas1</span><span class="s3">.</span><span class="s1">drawText</span><span class="s3">(</span><span class="s5">&quot;LEAD:&quot;</span><span class="s3">, </span><span class="s1">startX</span><span class="s3">, </span><span class="s1">startY</span><span class="s3">, </span><span class="s1">headerPaint</span><span class="s3">)</span>
+        <span class="s1">canvas1</span><span class="s3">.</span><span class="s1">drawLine</span><span class="s3">(</span><span class="s1">startX </span><span class="s3">+ </span><span class="s1">headerPaint</span><span class="s3">.</span><span class="s1">measureText</span><span class="s3">(</span><span class="s5">&quot;LEAD:&quot;</span><span class="s3">) + </span><span class="s1">labelSpacing</span><span class="s3">, </span><span class="s1">startY </span><span class="s3">+ </span><span class="s4">2</span><span class="s3">, </span><span class="s1">startX </span><span class="s3">+ </span><span class="s4">150</span><span class="s3">, </span><span class="s1">startY </span><span class="s3">+ </span><span class="s4">2</span><span class="s3">, </span><span class="s1">underlinePaint</span><span class="s3">)</span>
+        <span class="s1">canvas1</span><span class="s3">.</span><span class="s1">drawText</span><span class="s3">(</span><span class="s1">lead</span><span class="s3">, </span><span class="s1">startX </span><span class="s3">+ </span><span class="s1">headerPaint</span><span class="s3">.</span><span class="s1">measureText</span><span class="s3">(</span><span class="s5">&quot;LEAD:&quot;</span><span class="s3">) + </span><span class="s1">labelSpacing </span><span class="s3">+ </span><span class="s4">5 </span><span class="s3">, </span><span class="s1">startY</span><span class="s3">, </span><span class="s1">headerPaint</span><span class="s3">) </span><span class="s0">//Show the Lead Name</span>
+
+        <span class="s1">canvas1</span><span class="s3">.</span><span class="s1">drawText</span><span class="s3">(</span><span class="s5">&quot;SUPERVISOR:&quot;</span><span class="s3">, </span><span class="s1">startX </span><span class="s3">+ </span><span class="s4">160</span><span class="s3">, </span><span class="s1">startY</span><span class="s3">, </span><span class="s1">headerPaint</span><span class="s3">)</span>
+        <span class="s1">canvas1</span><span class="s3">.</span><span class="s1">drawLine</span><span class="s3">(</span><span class="s1">startX </span><span class="s3">+ </span><span class="s4">160 </span><span class="s3">+ </span><span class="s1">headerPaint</span><span class="s3">.</span><span class="s1">measureText</span><span class="s3">(</span><span class="s5">&quot;SUPERVISOR:&quot;</span><span class="s3">) + </span><span class="s1">labelSpacing</span><span class="s3">, </span><span class="s1">startY </span><span class="s3">+ </span><span class="s4">2</span><span class="s3">, </span><span class="s1">startX </span><span class="s3">+ </span><span class="s4">160 </span><span class="s3">+ </span><span class="s4">150</span><span class="s3">, </span><span class="s1">startY </span><span class="s3">+ </span><span class="s4">2</span><span class="s3">, </span><span class="s1">underlinePaint</span><span class="s3">)</span>
+        <span class="s1">canvas1</span><span class="s3">.</span><span class="s1">drawText</span><span class="s3">(</span><span class="s1">supervisor</span><span class="s3">, </span><span class="s1">startX </span><span class="s3">+ </span><span class="s4">160 </span><span class="s3">+ </span><span class="s1">headerPaint</span><span class="s3">.</span><span class="s1">measureText</span><span class="s3">(</span><span class="s5">&quot;SUPERVISOR:&quot;</span><span class="s3">) + </span><span class="s1">labelSpacing </span><span class="s3">+ </span><span class="s4">5</span><span class="s3">, </span><span class="s1">startY</span><span class="s3">, </span><span class="s1">headerPaint</span><span class="s3">)</span>
+
+        <span class="s0">// --- Rotation Table ---</span>
+        <span class="s1">startY </span><span class="s3">+= </span><span class="s4">2 </span><span class="s3">* </span><span class="s1">lineHeight </span><span class="s0">// More space before the table</span>
+        <span class="s2">val </span><span class="s1">tableStartX </span><span class="s3">= </span><span class="s1">startX</span>
+        <span class="s2">var </span><span class="s1">tableStartY </span><span class="s3">= </span><span class="s1">startY</span>
+        <span class="s2">val </span><span class="s1">nameColumnWidth </span><span class="s3">= </span><span class="s4">120f</span>
+        <span class="s2">val </span><span class="s1">timeSlotColumnWidth </span><span class="s3">= </span><span class="s4">50f </span><span class="s0">// Width for each time slot</span>
+        <span class="s2">val </span><span class="s1">cellHeight </span><span class="s3">= </span><span class="s4">20f</span>
+
+        <span class="s0">// Table Headers</span>
+        <span class="s1">canvas1</span><span class="s3">.</span><span class="s1">drawText</span><span class="s3">(</span><span class="s5">&quot;NAME&quot;</span><span class="s3">, </span><span class="s1">tableStartX</span><span class="s3">, </span><span class="s1">tableStartY</span><span class="s3">, </span><span class="s1">tableHeaderPaint</span><span class="s3">)</span>
+        <span class="s0">// Assuming you have a way to get the time slots (e.g., from shiftSetting)</span>
+        <span class="s2">val </span><span class="s1">timeSlots </span><span class="s3">= </span><span class="s1">rotationSheet</span><span class="s3">.</span><span class="s1">assignments</span><span class="s3">.</span><span class="s1">map </span><span class="s3">{ </span><span class="s1">it</span><span class="s3">.</span><span class="s1">timeSlot </span><span class="s3">}.</span><span class="s1">distinct</span><span class="s3">().</span><span class="s1">sorted</span><span class="s3">()</span>
+        <span class="s2">var </span><span class="s1">timeSlotX </span><span class="s3">= </span><span class="s1">tableStartX </span><span class="s3">+ </span><span class="s1">nameColumnWidth</span>
+        <span class="s2">for </span><span class="s3">(</span><span class="s1">timeSlot </span><span class="s2">in </span><span class="s1">timeSlots</span><span class="s3">) {</span>
+            <span class="s1">canvas1</span><span class="s3">.</span><span class="s1">drawText</span><span class="s3">(</span><span class="s1">timeSlot</span><span class="s3">, </span><span class="s1">timeSlotX</span><span class="s3">, </span><span class="s1">tableStartY</span><span class="s3">, </span><span class="s1">tableHeaderPaint</span><span class="s3">)</span>
+            <span class="s1">timeSlotX </span><span class="s3">+= </span><span class="s1">timeSlotColumnWidth</span>
+        <span class="s3">}</span>
+
+        <span class="s1">tableStartY </span><span class="s3">+= </span><span class="s1">cellHeight </span><span class="s0">// Move to the first row of data</span>
+        <span class="s0">// Table Data</span>
+
+        <span class="s0">// Group assignments by officer</span>
+        <span class="s2">val </span><span class="s1">assignmentsByOfficer </span><span class="s3">= </span><span class="s1">rotationSheet</span><span class="s3">.</span><span class="s1">assignments</span><span class="s3">.</span><span class="s1">groupBy </span><span class="s3">{ </span><span class="s1">it</span><span class="s3">.</span><span class="s1">officer </span><span class="s3">}</span>
+        <span class="s2">for </span><span class="s3">((</span><span class="s1">officer</span><span class="s3">, </span><span class="s1">assignments</span><span class="s3">) </span><span class="s2">in </span><span class="s1">assignmentsByOfficer</span><span class="s3">) {</span>
+            <span class="s1">canvas1</span><span class="s3">.</span><span class="s1">drawText</span><span class="s3">(</span><span class="s1">officer?</span><span class="s3">.</span><span class="s1">name ?: </span><span class="s5">&quot;Unassigned&quot;</span><span class="s3">, </span><span class="s1">tableStartX</span><span class="s3">, </span><span class="s1">tableStartY</span><span class="s3">, </span><span class="s1">tableTextPaint</span><span class="s3">)</span>
+
+            <span class="s2">var </span><span class="s1">currentTimeSlotX </span><span class="s3">= </span><span class="s1">tableStartX </span><span class="s3">+ </span><span class="s1">nameColumnWidth</span>
+            <span class="s2">for </span><span class="s3">(</span><span class="s1">timeSlot </span><span class="s2">in </span><span class="s1">timeSlots</span><span class="s3">) {</span>
+                <span class="s2">val </span><span class="s1">assignmentForTimeSlot </span><span class="s3">= </span><span class="s1">assignments</span><span class="s3">.</span><span class="s1">find </span><span class="s3">{ </span><span class="s1">it</span><span class="s3">.</span><span class="s1">timeSlot </span><span class="s3">== </span><span class="s1">timeSlot </span><span class="s3">}</span>
+                <span class="s2">val </span><span class="s1">positionCode </span><span class="s3">= </span><span class="s1">assignmentForTimeSlot?</span><span class="s3">.</span><span class="s1">positionKey?</span><span class="s3">.</span><span class="s1">code ?: </span><span class="s5">&quot;&quot;</span>
+                <span class="s1">canvas1</span><span class="s3">.</span><span class="s1">drawText</span><span class="s3">(</span><span class="s1">positionCode</span><span class="s3">, </span><span class="s1">currentTimeSlotX</span><span class="s3">, </span><span class="s1">tableStartY</span><span class="s3">, </span><span class="s1">tableTextPaintCenter</span><span class="s3">) </span><span class="s0">// Draw centered</span>
+                <span class="s1">currentTimeSlotX </span><span class="s3">+= </span><span class="s1">timeSlotColumnWidth</span>
+            <span class="s3">}</span>
+            <span class="s1">tableStartY </span><span class="s3">+= </span><span class="s1">cellHeight</span>
+
+        <span class="s3">}</span>
+
+        <span class="s0">// --- Draw Table Borders ---</span>
+        <span class="s0">//Horizontal Lines</span>
+        <span class="s2">val </span><span class="s1">tableBottomY </span><span class="s3">= </span><span class="s1">tableStartY</span>
+        <span class="s0">// Draw the top border</span>
+        <span class="s1">canvas1</span><span class="s3">.</span><span class="s1">drawLine</span><span class="s3">(</span><span class="s1">tableStartX</span><span class="s3">, </span><span class="s1">startY </span><span class="s3">- </span><span class="s1">cellHeight</span><span class="s3">, </span><span class="s1">timeSlotX</span><span class="s3">, </span><span class="s1">startY </span><span class="s3">- </span><span class="s1">cellHeight</span><span class="s3">, </span><span class="s1">underlinePaint</span><span class="s3">)</span>
+        <span class="s0">// Draw lines after each officer row</span>
+        <span class="s2">var </span><span class="s1">horizontalLineY </span><span class="s3">= </span><span class="s1">startY</span>
+        <span class="s2">for </span><span class="s3">(</span><span class="s1">i </span><span class="s2">in </span><span class="s4">0</span><span class="s3">..</span><span class="s1">assignmentsByOfficer</span><span class="s3">.</span><span class="s1">size</span><span class="s3">) { </span><span class="s0">// Include line after the last officer</span>
+            <span class="s1">canvas1</span><span class="s3">.</span><span class="s1">drawLine</span><span class="s3">(</span><span class="s1">tableStartX</span><span class="s3">, </span><span class="s1">horizontalLineY</span><span class="s3">, </span><span class="s1">timeSlotX</span><span class="s3">, </span><span class="s1">horizontalLineY</span><span class="s3">, </span><span class="s1">underlinePaint</span><span class="s3">)</span>
+            <span class="s1">horizontalLineY </span><span class="s3">+= </span><span class="s1">cellHeight</span>
+        <span class="s3">}</span>
+
+        <span class="s0">//Vertical Lines</span>
+        <span class="s2">var </span><span class="s1">verticalLineX </span><span class="s3">= </span><span class="s1">tableStartX</span>
+        <span class="s1">canvas1</span><span class="s3">.</span><span class="s1">drawLine</span><span class="s3">(</span><span class="s1">verticalLineX</span><span class="s3">, </span><span class="s1">startY </span><span class="s3">- </span><span class="s1">cellHeight</span><span class="s3">, </span><span class="s1">verticalLineX</span><span class="s3">, </span><span class="s1">tableBottomY</span><span class="s3">, </span><span class="s1">underlinePaint</span><span class="s3">) </span><span class="s0">// Leftmost border</span>
+        <span class="s2">for </span><span class="s3">(</span><span class="s1">i </span><span class="s2">in </span><span class="s4">0</span><span class="s3">..</span><span class="s1">timeSlots</span><span class="s3">.</span><span class="s1">size</span><span class="s3">) { </span><span class="s0">// Include the rightmost border</span>
+            <span class="s1">canvas1</span><span class="s3">.</span><span class="s1">drawLine</span><span class="s3">(</span><span class="s1">verticalLineX</span><span class="s3">, </span><span class="s1">startY </span><span class="s3">- </span><span class="s1">cellHeight</span><span class="s3">, </span><span class="s1">verticalLineX</span><span class="s3">, </span><span class="s1">tableBottomY</span><span class="s3">, </span><span class="s1">underlinePaint</span><span class="s3">)</span>
+            <span class="s1">verticalLineX </span><span class="s3">+= </span><span class="s2">if </span><span class="s3">(</span><span class="s1">i </span><span class="s3">== </span><span class="s4">0</span><span class="s3">) </span><span class="s1">nameColumnWidth </span><span class="s2">else </span><span class="s1">timeSlotColumnWidth</span>
+        <span class="s3">}</span>
+
+        <span class="s0">// --- Break Table ---</span>
+        <span class="s0">// Adjust startY to position the break table below the main table</span>
+        <span class="s2">var </span><span class="s1">breakTableStartY </span><span class="s3">= </span><span class="s1">tableStartY </span><span class="s3">+ </span><span class="s4">2 </span><span class="s3">* </span><span class="s1">lineHeight </span><span class="s0">// Add some spacing</span>
+
+        <span class="s0">// Headers</span>
+        <span class="s1">canvas1</span><span class="s3">.</span><span class="s1">drawText</span><span class="s3">(</span><span class="s5">&quot;NAME&quot;</span><span class="s3">, </span><span class="s1">tableStartX</span><span class="s3">, </span><span class="s1">breakTableStartY</span><span class="s3">, </span><span class="s1">tableHeaderPaint</span><span class="s3">)</span>
+        <span class="s1">canvas1</span><span class="s3">.</span><span class="s1">drawText</span><span class="s3">(</span><span class="s5">&quot;BREAKS&quot;</span><span class="s3">, </span><span class="s1">tableStartX </span><span class="s3">+ </span><span class="s1">nameColumnWidth</span><span class="s3">, </span><span class="s1">breakTableStartY</span><span class="s3">, </span><span class="s1">tableHeaderPaint</span><span class="s3">)</span>
+        <span class="s2">val </span><span class="s1">timeSlot15min </span><span class="s3">= (</span><span class="s1">tableStartX </span><span class="s3">+ </span><span class="s1">nameColumnWidth </span><span class="s3">+ (</span><span class="s4">2</span><span class="s3">* </span><span class="s1">timeSlotColumnWidth</span><span class="s3">))</span>
+        <span class="s1">canvas1</span><span class="s3">.</span><span class="s1">drawText</span><span class="s3">(</span>
+            <span class="s5">&quot;15 MIN&quot;</span><span class="s3">,</span>
+            <span class="s1">timeSlot15min</span><span class="s3">,</span>
+            <span class="s1">breakTableStartY</span><span class="s3">,</span>
+            <span class="s1">tableHeaderPaint</span>
+        <span class="s3">) </span><span class="s0">// Centering logic will become important here</span>
+        <span class="s2">val </span><span class="s1">timeSlot30min </span><span class="s3">= (</span><span class="s1">tableStartX </span><span class="s3">+ </span><span class="s1">nameColumnWidth </span><span class="s3">+ (</span><span class="s4">4 </span><span class="s3">* </span><span class="s1">timeSlotColumnWidth</span><span class="s3">))</span>
+        <span class="s1">canvas1</span><span class="s3">.</span><span class="s1">drawText</span><span class="s3">(</span>
+            <span class="s5">&quot;30 MIN&quot;</span><span class="s3">,</span>
+            <span class="s1">timeSlot30min</span><span class="s3">,</span>
+            <span class="s1">breakTableStartY</span><span class="s3">,</span>
+            <span class="s1">tableHeaderPaint</span>
+        <span class="s3">) </span><span class="s0">// Centering logic will become important here</span>
+        <span class="s2">val </span><span class="s1">timeSlotIn </span><span class="s3">= (</span><span class="s1">tableStartX </span><span class="s3">+ </span><span class="s1">nameColumnWidth </span><span class="s3">+ (</span><span class="s4">5.5 </span><span class="s3">* </span><span class="s1">timeSlotColumnWidth</span><span class="s3">).</span><span class="s1">toFloat</span><span class="s3">())</span>
+        <span class="s1">canvas1</span><span class="s3">.</span><span class="s1">drawText</span><span class="s3">(</span>
+            <span class="s5">&quot;IN&quot;</span><span class="s3">,</span>
+            <span class="s1">timeSlotIn</span><span class="s3">,</span>
+            <span class="s1">breakTableStartY</span><span class="s3">,</span>
+            <span class="s1">tableHeaderPaint</span>
+        <span class="s3">) </span><span class="s0">// Centering logic will become important here</span>
+        <span class="s2">val </span><span class="s1">timeSlotOut </span><span class="s3">= (</span><span class="s1">tableStartX </span><span class="s3">+ </span><span class="s1">nameColumnWidth </span><span class="s3">+ (</span><span class="s4">6.5 </span><span class="s3">* </span><span class="s1">timeSlotColumnWidth</span><span class="s3">).</span><span class="s1">toFloat</span><span class="s3">())</span>
+        <span class="s1">canvas1</span><span class="s3">.</span><span class="s1">drawText</span><span class="s3">(</span>
+            <span class="s5">&quot;OUT&quot;</span><span class="s3">,</span>
+            <span class="s1">timeSlotOut</span><span class="s3">,</span>
+            <span class="s1">breakTableStartY</span><span class="s3">,</span>
+            <span class="s1">tableHeaderPaint</span>
+        <span class="s3">) </span><span class="s0">// Centering logic will become important here</span>
+
+        <span class="s1">breakTableStartY </span><span class="s3">+= </span><span class="s1">cellHeight </span><span class="s0">// Move to the data rows</span>
+
+        <span class="s0">// --- Officer Break Data ---</span>
+        <span class="s2">for </span><span class="s3">((</span><span class="s1">officer</span><span class="s3">, </span><span class="s1">assignments</span><span class="s3">) </span><span class="s2">in </span><span class="s1">assignmentsByOfficer</span><span class="s3">) {</span>
+            <span class="s1">canvas1</span><span class="s3">.</span><span class="s1">drawText</span><span class="s3">(</span><span class="s1">officer?</span><span class="s3">.</span><span class="s1">name ?: </span><span class="s5">&quot;Unassigned&quot;</span><span class="s3">, </span><span class="s1">tableStartX</span><span class="s3">, </span><span class="s1">breakTableStartY</span><span class="s3">, </span><span class="s1">tableTextPaint</span><span class="s3">)</span>
+
+            <span class="s0">//Draw the &quot;X&quot; for the Officer's Breaks, this will need more work</span>
+            <span class="s0">// You'll need to determine *which* breaks the officer has and draw &quot;X&quot; in the correct columns.</span>
+            <span class="s0">// This is a placeholder.  You need to get the *actual* break times.</span>
+
+            <span class="s2">val </span><span class="s1">officerBreaks </span><span class="s3">= </span><span class="s1">assignments</span><span class="s3">.</span><span class="s1">filter </span><span class="s3">{ </span><span class="s1">it</span><span class="s3">.</span><span class="s1">positionKey?</span><span class="s3">.</span><span class="s1">isBreak </span><span class="s3">== </span><span class="s2">true </span><span class="s3">} </span><span class="s0">// Get the break assignments</span>
+            <span class="s2">if </span><span class="s3">(</span><span class="s1">officerBreaks</span><span class="s3">.</span><span class="s1">isNotEmpty</span><span class="s3">()) {</span>
+                <span class="s2">for</span><span class="s3">(</span><span class="s1">breaks </span><span class="s2">in </span><span class="s1">officerBreaks</span><span class="s3">){</span>
+                    <span class="s2">if</span><span class="s3">(</span><span class="s1">breaks</span><span class="s3">.</span><span class="s1">positionKey?</span><span class="s3">.</span><span class="s1">displayName </span><span class="s3">== </span><span class="s5">&quot;Break&quot;</span><span class="s3">){ </span><span class="s0">//Hardcoded for now</span>
+                        <span class="s0">// Logic to determine position for 15 and 30 mins</span>
+                        <span class="s2">if</span><span class="s3">(</span><span class="s1">breaks</span><span class="s3">.</span><span class="s1">timeSlot </span><span class="s3">== </span><span class="s1">timeSlots</span><span class="s3">[</span><span class="s4">2</span><span class="s3">]){</span><span class="s0">//Hardcoded for now</span>
+                            <span class="s1">canvas1</span><span class="s3">.</span><span class="s1">drawText</span><span class="s3">(</span>
+                                <span class="s5">&quot;X&quot;</span><span class="s3">,</span>
+                                <span class="s1">tableStartX </span><span class="s3">+ </span><span class="s1">nameColumnWidth </span><span class="s3">+ (</span><span class="s4">2 </span><span class="s3">* </span><span class="s1">timeSlotColumnWidth</span><span class="s3">) + (</span><span class="s1">timeSlotColumnWidth</span><span class="s3">/</span><span class="s4">2</span><span class="s3">),</span>
+                                <span class="s1">breakTableStartY</span><span class="s3">,</span>
+                                <span class="s1">tableTextPaintCenter</span>
+                            <span class="s3">)</span>
+                        <span class="s3">}</span>
+                        <span class="s2">if</span><span class="s3">(</span><span class="s1">breaks</span><span class="s3">.</span><span class="s1">timeSlot </span><span class="s3">== </span><span class="s1">timeSlots</span><span class="s3">[</span><span class="s4">8</span><span class="s3">]){</span><span class="s0">//Hardcoded for now</span>
+                            <span class="s1">canvas1</span><span class="s3">.</span><span class="s1">drawText</span><span class="s3">(</span>
+                                <span class="s5">&quot;X&quot;</span><span class="s3">,</span>
+                                <span class="s1">tableStartX </span><span class="s3">+ </span><span class="s1">nameColumnWidth </span><span class="s3">+ (</span><span class="s4">4 </span><span class="s3">* </span><span class="s1">timeSlotColumnWidth</span><span class="s3">) + (</span><span class="s1">timeSlotColumnWidth</span><span class="s3">/</span><span class="s4">2</span><span class="s3">),</span>
+                                <span class="s1">breakTableStartY</span><span class="s3">,</span>
+                                <span class="s1">tableTextPaintCenter</span>
+                            <span class="s3">)</span>
+                        <span class="s3">}</span>
+                        <span class="s2">if</span><span class="s3">(</span><span class="s1">breaks</span><span class="s3">.</span><span class="s1">timeSlot </span><span class="s3">== </span><span class="s1">timeSlots</span><span class="s3">[</span><span class="s4">14</span><span class="s3">]){</span><span class="s0">//Hardcoded for now</span>
+                            <span class="s1">canvas1</span><span class="s3">.</span><span class="s1">drawText</span><span class="s3">(</span>
+                                <span class="s5">&quot;X&quot;</span><span class="s3">,</span>
+                                <span class="s1">tableStartX </span><span class="s3">+ </span><span class="s1">nameColumnWidth </span><span class="s3">+ (</span><span class="s4">2 </span><span class="s3">* </span><span class="s1">timeSlotColumnWidth</span><span class="s3">) + (</span><span class="s1">timeSlotColumnWidth</span><span class="s3">/</span><span class="s4">2</span><span class="s3">),</span>
+                                <span class="s1">breakTableStartY</span><span class="s3">,</span>
+                                <span class="s1">tableTextPaintCenter</span>
+                            <span class="s3">)</span>
+                        <span class="s3">}</span>
+                    <span class="s3">}</span>
+                <span class="s3">}</span>
+            <span class="s3">}</span>
+            <span class="s1">breakTableStartY </span><span class="s3">+= </span><span class="s1">cellHeight </span><span class="s0">// Next officer's break info</span>
+        <span class="s3">}</span>
+
+        <span class="s0">// --- Draw Break Table Borders ---</span>
+        <span class="s0">// Horizontal Lines</span>
+        <span class="s0">// Draw the top border</span>
+        <span class="s1">canvas1</span><span class="s3">.</span><span class="s1">drawLine</span><span class="s3">(</span><span class="s1">tableStartX</span><span class="s3">,  </span><span class="s1">breakTableStartY </span><span class="s3">- (</span><span class="s1">assignmentsByOfficer</span><span class="s3">.</span><span class="s1">size </span><span class="s3">+ </span><span class="s4">1</span><span class="s3">) * </span><span class="s1">cellHeight </span><span class="s3">, </span><span class="s1">tableStartX </span><span class="s3">+ </span><span class="s1">nameColumnWidth </span><span class="s3">+ (</span><span class="s4">8 </span><span class="s3">* </span><span class="s1">timeSlotColumnWidth</span><span class="s3">) ,  </span><span class="s1">breakTableStartY </span><span class="s3">- (</span><span class="s1">assignmentsByOfficer</span><span class="s3">.</span><span class="s1">size </span><span class="s3">+ </span><span class="s4">1</span><span class="s3">)* </span><span class="s1">cellHeight</span><span class="s3">, </span><span class="s1">underlinePaint</span><span class="s3">)</span>
+        <span class="s0">//Draw lines after each officer row</span>
+        <span class="s2">var </span><span class="s1">horizontalBreakLineY </span><span class="s3">= </span><span class="s1">breakTableStartY </span><span class="s3">- (</span><span class="s1">assignmentsByOfficer</span><span class="s3">.</span><span class="s1">size </span><span class="s3">* </span><span class="s1">cellHeight</span><span class="s3">)</span>
+        <span class="s2">for </span><span class="s3">(</span><span class="s1">i </span><span class="s2">in </span><span class="s4">0</span><span class="s3">..</span><span class="s1">assignmentsByOfficer</span><span class="s3">.</span><span class="s1">size</span><span class="s3">) { </span><span class="s0">// Include line after the last officer</span>
+            <span class="s1">canvas1</span><span class="s3">.</span><span class="s1">drawLine</span><span class="s3">(</span><span class="s1">tableStartX</span><span class="s3">, </span><span class="s1">horizontalBreakLineY</span><span class="s3">,  </span><span class="s1">tableStartX </span><span class="s3">+ </span><span class="s1">nameColumnWidth </span><span class="s3">+ (</span><span class="s4">8 </span><span class="s3">* </span><span class="s1">timeSlotColumnWidth</span><span class="s3">), </span><span class="s1">horizontalBreakLineY</span><span class="s3">, </span><span class="s1">underlinePaint</span><span class="s3">)</span>
+            <span class="s1">horizontalBreakLineY </span><span class="s3">+= </span><span class="s1">cellHeight</span>
+        <span class="s3">}</span>
+
+        <span class="s0">//Vertical Lines</span>
+        <span class="s2">var </span><span class="s1">verticalBreakLineX </span><span class="s3">= </span><span class="s1">tableStartX</span>
+        <span class="s1">canvas1</span><span class="s3">.</span><span class="s1">drawLine</span><span class="s3">(</span><span class="s1">verticalBreakLineX</span><span class="s3">, </span><span class="s1">breakTableStartY </span><span class="s3">- ((</span><span class="s1">assignmentsByOfficer</span><span class="s3">.</span><span class="s1">size </span><span class="s3">+ </span><span class="s4">1</span><span class="s3">) * </span><span class="s1">cellHeight</span><span class="s3">), </span><span class="s1">verticalBreakLineX</span><span class="s3">, </span><span class="s1">breakTableStartY</span><span class="s3">, </span><span class="s1">underlinePaint</span><span class="s3">) </span><span class="s0">// Leftmost border</span>
+        <span class="s2">for </span><span class="s3">(</span><span class="s1">i </span><span class="s2">in </span><span class="s4">0</span><span class="s3">..</span><span class="s4">7</span><span class="s3">) {</span>
+            <span class="s2">val </span><span class="s1">columnWidth </span><span class="s3">= </span><span class="s2">if </span><span class="s3">(</span><span class="s1">i </span><span class="s3">== </span><span class="s4">0</span><span class="s3">) {</span>
+                <span class="s1">nameColumnWidth</span>
+            <span class="s3">} </span><span class="s2">else if </span><span class="s3">(</span><span class="s1">i </span><span class="s2">in </span><span class="s4">1</span><span class="s3">..</span><span class="s4">4</span><span class="s3">) {</span>
+                <span class="s3">(</span><span class="s1">timeSlotColumnWidth </span><span class="s3">* </span><span class="s4">1.5</span><span class="s3">).</span><span class="s1">toInt</span><span class="s3">()</span>
+            <span class="s3">} </span><span class="s2">else </span><span class="s3">{</span>
+                <span class="s1">timeSlotColumnWidth</span>
+            <span class="s3">}</span>
+            <span class="s1">canvas1</span><span class="s3">.</span><span class="s1">drawLine</span><span class="s3">(</span>
+                <span class="s1">verticalBreakLineX</span><span class="s3">,</span>
+                <span class="s1">breakTableStartY </span><span class="s3">- ((</span><span class="s1">assignmentsByOfficer</span><span class="s3">.</span><span class="s1">size </span><span class="s3">+ </span><span class="s4">1</span><span class="s3">) * </span><span class="s1">cellHeight</span><span class="s3">),</span>
+                <span class="s1">verticalBreakLineX</span><span class="s3">,</span>
+                <span class="s1">breakTableStartY</span><span class="s3">,</span>
+                <span class="s1">underlinePaint</span>
+            <span class="s3">)</span>
+            <span class="s1">verticalBreakLineX </span><span class="s3">+= </span><span class="s1">columnWidth</span><span class="s3">.</span><span class="s1">toFloat</span><span class="s3">()</span>
+        <span class="s3">}</span>
+
+        <span class="s0">// --- Legend (Position Key) ---</span>
+        <span class="s2">var </span><span class="s1">legendStartY </span><span class="s3">= </span><span class="s1">breakTableStartY </span><span class="s3">+ </span><span class="s4">2 </span><span class="s3">* </span><span class="s1">lineHeight  </span><span class="s0">// Position below the break table</span>
+        <span class="s1">canvas1</span><span class="s3">.</span><span class="s1">drawText</span><span class="s3">(</span><span class="s5">&quot;LEGEND:&quot;</span><span class="s3">, </span><span class="s1">startX</span><span class="s3">, </span><span class="s1">legendStartY</span><span class="s3">, </span><span class="s1">tableHeaderPaint</span><span class="s3">)</span>
+        <span class="s1">legendStartY </span><span class="s3">+= </span><span class="s1">lineHeight</span>
+
+        <span class="s2">for </span><span class="s3">(</span><span class="s1">key </span><span class="s2">in </span><span class="s1">positionKeys</span><span class="s3">) {</span>
+            <span class="s1">canvas1</span><span class="s3">.</span><span class="s1">drawText</span><span class="s3">(</span><span class="s5">&quot;</span><span class="s2">${</span><span class="s1">key</span><span class="s3">.</span><span class="s1">code</span><span class="s2">} </span><span class="s5">- </span><span class="s2">${</span><span class="s1">key</span><span class="s3">.</span><span class="s1">displayName</span><span class="s2">}</span><span class="s5">&quot;</span><span class="s3">, </span><span class="s1">startX</span><span class="s3">, </span><span class="s1">legendStartY</span><span class="s3">, </span><span class="s1">tableTextPaint</span><span class="s3">)</span>
+            <span class="s1">legendStartY </span><span class="s3">+= </span><span class="s1">lineHeight</span>
+        <span class="s3">}</span>
+
+        <span class="s1">document</span><span class="s3">.</span><span class="s1">finishPage</span><span class="s3">(</span><span class="s1">page1</span><span class="s3">)</span>
+
+        <span class="s0">// --- File Saving (using getExternalFilesDir) ---</span>
+        <span class="s2">val </span><span class="s1">directory </span><span class="s3">= </span><span class="s1">context</span><span class="s3">.</span><span class="s1">getExternalFilesDir</span><span class="s3">(</span><span class="s1">Environment</span><span class="s3">.</span><span class="s1">DIRECTORY_DOCUMENTS</span><span class="s3">)</span>
+        <span class="s2">if </span><span class="s3">(</span><span class="s1">directory </span><span class="s3">== </span><span class="s2">null</span><span class="s3">) {</span>
+            <span class="s1">Log</span><span class="s3">.</span><span class="s1">e</span><span class="s3">(</span><span class="s5">&quot;PdfGenerator&quot;</span><span class="s3">, </span><span class="s5">&quot;Could not get external files directory&quot;</span><span class="s3">)</span>
+            <span class="s2">return null</span>
+        <span class="s3">}</span>
+        <span class="s2">if </span><span class="s3">(!</span><span class="s1">directory</span><span class="s3">.</span><span class="s1">exists</span><span class="s3">()) {</span>
+            <span class="s1">directory</span><span class="s3">.</span><span class="s1">mkdirs</span><span class="s3">() </span><span class="s0">// Create the directory if it doesn't exist</span>
+        <span class="s3">}</span>
+
+        <span class="s2">val </span><span class="s1">calendar </span><span class="s3">= </span><span class="s1">Calendar</span><span class="s3">.</span><span class="s1">getInstance</span><span class="s3">()</span>
+        <span class="s2">val </span><span class="s1">fileName </span><span class="s3">=</span>
+            <span class="s5">&quot;RotationSheet_</span><span class="s2">${</span><span class="s1">calendar</span><span class="s3">.</span><span class="s1">get</span><span class="s3">(</span><span class="s1">Calendar</span><span class="s3">.</span><span class="s1">YEAR</span><span class="s3">)</span><span class="s2">}</span><span class="s5">_</span><span class="s2">${</span><span class="s1">calendar</span><span class="s3">.</span><span class="s1">get</span><span class="s3">(</span><span class="s1">Calendar</span><span class="s3">.</span><span class="s1">MONTH</span><span class="s3">) + </span><span class="s4">1</span><span class="s2">}</span><span class="s5">_</span><span class="s2">${</span><span class="s1">calendar</span><span class="s3">.</span><span class="s1">get</span><span class="s3">(</span><span class="s1">Calendar</span><span class="s3">.</span><span class="s1">DAY_OF_MONTH</span><span class="s3">)</span><span class="s2">}</span><span class="s5">.pdf&quot;</span>
+        <span class="s2">val </span><span class="s1">file </span><span class="s3">= </span><span class="s1">File</span><span class="s3">(</span><span class="s1">directory</span><span class="s3">, </span><span class="s1">fileName</span><span class="s3">)</span>
+
+        <span class="s2">return try </span><span class="s3">{</span>
+            <span class="s1">FileOutputStream</span><span class="s3">(</span><span class="s1">file</span><span class="s3">).</span><span class="s1">use </span><span class="s3">{ </span><span class="s1">outputStream </span><span class="s3">-&gt;</span>
+                <span class="s1">document</span><span class="s3">.</span><span class="s1">writeTo</span><span class="s3">(</span><span class="s1">outputStream</span><span class="s3">)</span>
+            <span class="s3">}</span>
+            <span class="s1">Log</span><span class="s3">.</span><span class="s1">d</span><span class="s3">(</span><span class="s5">&quot;PdfGenerator&quot;</span><span class="s3">, </span><span class="s5">&quot;PDF saved to: </span><span class="s2">${</span><span class="s1">file</span><span class="s3">.</span><span class="s1">absolutePath</span><span class="s2">}</span><span class="s5">&quot;</span><span class="s3">)</span>
+            <span class="s1">file </span><span class="s0">// Return the File object</span>
+        <span class="s3">} </span><span class="s1">catch </span><span class="s3">(</span><span class="s1">e: IOException</span><span class="s3">) {</span>
+            <span class="s1">Log</span><span class="s3">.</span><span class="s1">e</span><span class="s3">(</span><span class="s5">&quot;PdfGenerator&quot;</span><span class="s3">, </span><span class="s5">&quot;Error writing PDF&quot;</span><span class="s3">, </span><span class="s1">e</span><span class="s3">)</span>
+            <span class="s2">null </span><span class="s0">// Return null on error</span>
+        <span class="s3">} </span><span class="s1">finally </span><span class="s3">{</span>
+            <span class="s1">document</span><span class="s3">.</span><span class="s1">close</span><span class="s3">()</span>
+        <span class="s3">}</span>
+    <span class="s3">}</span>
+    <span class="s1">private </span><span class="s2">fun </span><span class="s1">getLogoBitmapFromVectorDrawable</span><span class="s3">(</span><span class="s1">drawableId: Int</span><span class="s3">)</span><span class="s1">: Bitmap? </span><span class="s3">{</span>
+        <span class="s2">return try </span><span class="s3">{</span>
+            <span class="s2">val </span><span class="s1">drawable </span><span class="s3">= </span><span class="s1">ContextCompat</span><span class="s3">.</span><span class="s1">getDrawable</span><span class="s3">(</span><span class="s1">context</span><span class="s3">, </span><span class="s1">drawableId</span><span class="s3">) </span><span class="s1">?: </span><span class="s2">return null</span>
+            <span class="s1">drawable</span><span class="s3">.</span><span class="s1">toBitmap</span><span class="s3">()</span>
+        <span class="s3">} </span><span class="s1">catch </span><span class="s3">(</span><span class="s1">e: Exception</span><span class="s3">) {</span>
+            <span class="s1">Log</span><span class="s3">.</span><span class="s1">e</span><span class="s3">(</span><span class="s5">&quot;PdfGenerator&quot;</span><span class="s3">, </span><span class="s5">&quot;Error converting vector drawable to bitmap&quot;</span><span class="s3">, </span><span class="s1">e</span><span class="s3">)</span>
+            <span class="s2">null</span>
+        <span class="s3">}</span>
+    <span class="s3">}</span>
+    <span class="s1">private </span><span class="s2">fun </span><span class="s1">drawDashedLine</span><span class="s3">(</span>
+        <span class="s1">canvas: Canvas</span><span class="s3">,</span>
+        <span class="s1">paint: Paint</span><span class="s3">,</span>
+        <span class="s1">startX: Float</span><span class="s3">,</span>
+        <span class="s1">startY: Float</span><span class="s3">,</span>
+        <span class="s1">endX: Float</span><span class="s3">,</span>
+        <span class="s1">endY: Float</span><span class="s3">,</span>
+        <span class="s1">dashLength: Float </span><span class="s3">= </span><span class="s4">5f</span><span class="s3">,</span>
+        <span class="s1">gapLength: Float </span><span class="s3">= </span><span class="s4">5f</span>
+    <span class="s3">) {</span>
+        <span class="s2">val </span><span class="s1">distance </span><span class="s3">= </span><span class="s1">hypot</span><span class="s3">(</span><span class="s1">endX </span><span class="s3">- </span><span class="s1">startX</span><span class="s3">, </span><span class="s1">endY </span><span class="s3">- </span><span class="s1">startY</span><span class="s3">)</span>
+        <span class="s2">val </span><span class="s1">numDashes </span><span class="s3">= (</span><span class="s1">distance </span><span class="s3">/ (</span><span class="s1">dashLength </span><span class="s3">+ </span><span class="s1">gapLength</span><span class="s3">)).</span><span class="s1">toInt</span><span class="s3">()</span>
+
+        <span class="s2">for </span><span class="s3">(</span><span class="s1">i </span><span class="s2">in </span><span class="s4">0 </span><span class="s1">until numDashes</span><span class="s3">) {</span>
+            <span class="s2">val </span><span class="s1">x1 </span><span class="s3">= </span><span class="s1">startX </span><span class="s3">+ (</span><span class="s1">dashLength </span><span class="s3">+ </span><span class="s1">gapLength</span><span class="s3">) * </span><span class="s1">i </span><span class="s3">* (</span><span class="s1">endX </span><span class="s3">- </span><span class="s1">startX</span><span class="s3">) / </span><span class="s1">distance</span>
+            <span class="s2">val </span><span class="s1">y1 </span><span class="s3">= </span><span class="s1">startY </span><span class="s3">+ (</span><span class="s1">dashLength </span><span class="s3">+ </span><span class="s1">gapLength</span><span class="s3">) * </span><span class="s1">i </span><span class="s3">* (</span><span class="s1">endY </span><span class="s3">- </span><span class="s1">startY</span><span class="s3">) / </span><span class="s1">distance</span>
+            <span class="s2">val </span><span class="s1">x2 </span><span class="s3">= </span><span class="s1">minOf</span><span class="s3">(</span>
+                <span class="s1">startX </span><span class="s3">+ (</span><span class="s1">dashLength </span><span class="s3">+ </span><span class="s1">gapLength</span><span class="s3">) * </span><span class="s1">i </span><span class="s3">* (</span><span class="s1">endX </span><span class="s3">- </span><span class="s1">startX</span><span class="s3">) / </span><span class="s1">distance </span><span class="s3">+ </span><span class="s1">dashLength </span><span class="s3">* (</span><span class="s1">endX </span><span class="s3">- </span><span class="s1">startX</span><span class="s3">) / </span><span class="s1">distance</span><span class="s3">,</span>
+                <span class="s1">endX</span>
+            <span class="s3">)</span>
+            <span class="s2">val </span><span class="s1">y2 </span><span class="s3">= </span><span class="s1">minOf</span><span class="s3">(</span>
+                <span class="s1">startY </span><span class="s3">+ (</span><span class="s1">dashLength </span><span class="s3">+ </span><span class="s1">gapLength</span><span class="s3">) * </span><span class="s1">i </span><span class="s3">* (</span><span class="s1">endY </span><span class="s3">- </span><span class="s1">startY</span><span class="s3">) / </span><span class="s1">distance </span><span class="s3">+ </span><span class="s1">dashLength </span><span class="s3">* (</span><span class="s1">endY </span><span class="s3">- </span><span class="s1">startY</span><span class="s3">) / </span><span class="s1">distance</span><span class="s3">,</span>
+                <span class="s1">endY</span>
+            <span class="s3">)</span>
+            <span class="s1">canvas</span><span class="s3">.</span><span class="s1">drawLine</span><span class="s3">(</span><span class="s1">x1</span><span class="s3">, </span><span class="s1">y1</span><span class="s3">, </span><span class="s1">x2</span><span class="s3">, </span><span class="s1">y2</span><span class="s3">, </span><span class="s1">paint</span><span class="s3">)</span>
+        <span class="s3">}</span>
+    <span class="s3">}</span>
+<span class="s3">}</span></pre>
+</body>
+</html>

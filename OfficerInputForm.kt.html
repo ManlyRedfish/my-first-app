@@ -1,0 +1,302 @@
+<html>
+<head>
+<title>OfficerInputForm.kt</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<style type="text/css">
+.s0 { color: #7a7e85;}
+.s1 { color: #bcbec4;}
+.s2 { color: #cf8e6d;}
+.s3 { color: #bcbec4;}
+.s4 { color: #6aab73;}
+.s5 { color: #2aacb8;}
+</style>
+</head>
+<body bgcolor="#1e1f22">
+<table CELLSPACING=0 CELLPADDING=5 COLS=1 WIDTH="100%" BGCOLOR="#606060" >
+<tr><td><center>
+<font face="Arial, Helvetica" color="#000000">
+OfficerInputForm.kt</font>
+</center></td></tr></table>
+<pre><span class="s0">// File: ui/main/OfficerInputForm.kt</span>
+<span class="s2">package </span><span class="s1">com</span><span class="s3">.</span><span class="s1">example</span><span class="s3">.</span><span class="s1">rotationappv10</span><span class="s3">.</span><span class="s1">ui</span><span class="s3">.</span><span class="s1">main</span>
+
+<span class="s1">import android</span><span class="s3">.</span><span class="s1">app</span><span class="s3">.</span><span class="s1">TimePickerDialog</span>
+<span class="s1">import androidx</span><span class="s3">.</span><span class="s1">compose</span><span class="s3">.</span><span class="s1">foundation</span><span class="s3">.</span><span class="s1">clickable</span>
+<span class="s1">import androidx</span><span class="s3">.</span><span class="s1">compose</span><span class="s3">.</span><span class="s1">foundation</span><span class="s3">.</span><span class="s1">layout</span><span class="s3">.*</span>
+<span class="s1">import androidx</span><span class="s3">.</span><span class="s1">compose</span><span class="s3">.</span><span class="s1">foundation</span><span class="s3">.</span><span class="s1">text</span><span class="s3">.</span><span class="s1">KeyboardOptions</span>
+<span class="s1">import androidx</span><span class="s3">.</span><span class="s1">compose</span><span class="s3">.</span><span class="s1">material3</span><span class="s3">.*</span>
+<span class="s1">import androidx</span><span class="s3">.</span><span class="s1">compose</span><span class="s3">.</span><span class="s1">runtime</span><span class="s3">.*</span>
+<span class="s1">import androidx</span><span class="s3">.</span><span class="s1">compose</span><span class="s3">.</span><span class="s1">ui</span><span class="s3">.</span><span class="s1">Alignment</span>
+<span class="s1">import androidx</span><span class="s3">.</span><span class="s1">compose</span><span class="s3">.</span><span class="s1">ui</span><span class="s3">.</span><span class="s1">Modifier</span>
+<span class="s1">import androidx</span><span class="s3">.</span><span class="s1">compose</span><span class="s3">.</span><span class="s1">ui</span><span class="s3">.</span><span class="s1">platform</span><span class="s3">.</span><span class="s1">LocalContext</span>
+<span class="s1">import androidx</span><span class="s3">.</span><span class="s1">compose</span><span class="s3">.</span><span class="s1">ui</span><span class="s3">.</span><span class="s1">text</span><span class="s3">.</span><span class="s1">input</span><span class="s3">.</span><span class="s1">KeyboardType</span>
+<span class="s1">import androidx</span><span class="s3">.</span><span class="s1">compose</span><span class="s3">.</span><span class="s1">ui</span><span class="s3">.</span><span class="s1">unit</span><span class="s3">.</span><span class="s1">dp</span>
+<span class="s1">import java</span><span class="s3">.</span><span class="s1">util</span><span class="s3">.</span><span class="s1">Calendar</span>
+<span class="s1">import kotlinx</span><span class="s3">.</span><span class="s1">coroutines</span><span class="s3">.</span><span class="s1">launch </span><span class="s0">// Import for coroutines</span>
+
+<span class="s1">@OptIn</span><span class="s3">(</span><span class="s1">ExperimentalMaterial3Api::</span><span class="s2">class</span><span class="s3">)</span>
+<span class="s1">@Composable</span>
+<span class="s2">fun </span><span class="s1">OfficerInputForm</span><span class="s3">(</span><span class="s1">onAddOfficer: </span><span class="s3">(</span><span class="s1">String</span><span class="s3">, </span><span class="s1">List</span><span class="s3">&lt;</span><span class="s1">String</span><span class="s3">&gt;, </span><span class="s1">String</span><span class="s3">, </span><span class="s1">String</span><span class="s3">, </span><span class="s1">Boolean</span><span class="s3">, </span><span class="s1">Int</span><span class="s3">) -&gt; </span><span class="s1">Unit</span><span class="s3">) {</span>
+    <span class="s2">var </span><span class="s1">name by remember </span><span class="s3">{ </span><span class="s1">mutableStateOf</span><span class="s3">(</span><span class="s4">&quot;&quot;</span><span class="s3">) }</span>
+    <span class="s2">val </span><span class="s1">availableCertifications </span><span class="s3">= </span><span class="s1">listOf</span><span class="s3">(</span><span class="s4">&quot;XRay&quot;</span><span class="s3">, </span><span class="s4">&quot;SST&quot;</span><span class="s3">, </span><span class="s4">&quot;DO&quot;</span><span class="s3">, </span><span class="s4">&quot;None&quot;</span><span class="s3">)</span>
+    <span class="s2">var </span><span class="s1">certificationsExpanded by remember </span><span class="s3">{ </span><span class="s1">mutableStateOf</span><span class="s3">(</span><span class="s2">false</span><span class="s3">) }</span>
+    <span class="s2">var </span><span class="s1">selectedCerts by remember </span><span class="s3">{ </span><span class="s1">mutableStateOf</span><span class="s3">(</span><span class="s1">listOf</span><span class="s3">&lt;</span><span class="s1">String</span><span class="s3">&gt;()) }</span>
+    <span class="s2">var </span><span class="s1">startTime by remember </span><span class="s3">{ </span><span class="s1">mutableStateOf</span><span class="s3">(</span><span class="s4">&quot;08:00&quot;</span><span class="s3">) }</span>
+    <span class="s2">val </span><span class="s1">genderOptions </span><span class="s3">= </span><span class="s1">listOf</span><span class="s3">(</span><span class="s4">&quot;Male&quot;</span><span class="s3">, </span><span class="s4">&quot;Female&quot;</span><span class="s3">, </span><span class="s4">&quot;Other&quot;</span><span class="s3">)</span>
+    <span class="s2">var </span><span class="s1">selectedGender by remember </span><span class="s3">{ </span><span class="s1">mutableStateOf</span><span class="s3">(</span><span class="s1">genderOptions</span><span class="s3">[</span><span class="s5">0</span><span class="s3">]) }</span>
+    <span class="s2">var </span><span class="s1">isFullTime by remember </span><span class="s3">{ </span><span class="s1">mutableStateOf</span><span class="s3">(</span><span class="s2">true</span><span class="s3">) }</span>
+
+    <span class="s2">val </span><span class="s1">checkpoints </span><span class="s3">= </span><span class="s1">listOf</span><span class="s3">(</span><span class="s4">&quot;Checkpoint A&quot;</span><span class="s3">, </span><span class="s4">&quot;Checkpoint B&quot;</span><span class="s3">, </span><span class="s4">&quot;Checkpoint C&quot;</span><span class="s3">, </span><span class="s4">&quot;Checkpoint-Wide&quot;</span><span class="s3">)</span>
+    <span class="s2">var </span><span class="s1">checkpointExpanded by remember </span><span class="s3">{ </span><span class="s1">mutableStateOf</span><span class="s3">(</span><span class="s2">false</span><span class="s3">) }</span>
+    <span class="s2">var </span><span class="s1">selectedCheckpoint by remember </span><span class="s3">{ </span><span class="s1">mutableStateOf</span><span class="s3">(</span><span class="s4">&quot;&quot;</span><span class="s3">) }</span>
+
+    <span class="s2">val </span><span class="s1">lanes </span><span class="s3">= </span><span class="s1">listOf</span><span class="s3">(</span><span class="s4">&quot;Lane 1&quot;</span><span class="s3">, </span><span class="s4">&quot;Lane 2&quot;</span><span class="s3">, </span><span class="s4">&quot;Lane 3&quot;</span><span class="s3">, </span><span class="s4">&quot;Lane 4&quot;</span><span class="s3">, </span><span class="s4">&quot;Lane 5&quot;</span><span class="s3">)</span>
+    <span class="s2">var </span><span class="s1">laneExpanded by remember </span><span class="s3">{ </span><span class="s1">mutableStateOf</span><span class="s3">(</span><span class="s2">false</span><span class="s3">) }</span>
+    <span class="s2">var </span><span class="s1">selectedLane by remember </span><span class="s3">{ </span><span class="s1">mutableStateOf</span><span class="s3">(</span><span class="s4">&quot;&quot;</span><span class="s3">) }</span>
+
+    <span class="s2">var </span><span class="s1">lead by remember </span><span class="s3">{ </span><span class="s1">mutableStateOf</span><span class="s3">(</span><span class="s4">&quot;&quot;</span><span class="s3">) }</span>
+    <span class="s2">var </span><span class="s1">supervisor by remember </span><span class="s3">{ </span><span class="s1">mutableStateOf</span><span class="s3">(</span><span class="s4">&quot;&quot;</span><span class="s3">) }</span>
+
+    <span class="s2">var </span><span class="s1">officerCountInputMode by remember </span><span class="s3">{ </span><span class="s1">mutableStateOf</span><span class="s3">(</span><span class="s2">false</span><span class="s3">) }</span>
+    <span class="s2">var </span><span class="s1">officerCount by remember </span><span class="s3">{ </span><span class="s1">mutableStateOf</span><span class="s3">(</span><span class="s5">1</span><span class="s3">) }</span>
+
+    <span class="s2">val </span><span class="s1">context </span><span class="s3">= </span><span class="s1">LocalContext</span><span class="s3">.</span><span class="s1">current</span>
+    <span class="s2">val </span><span class="s1">coroutineScope </span><span class="s3">= </span><span class="s1">rememberCoroutineScope</span><span class="s3">() </span><span class="s0">// Get a CoroutineScope</span>
+
+
+    <span class="s2">fun </span><span class="s1">showTimePicker</span><span class="s3">() {</span>
+        <span class="s2">val </span><span class="s1">calendar </span><span class="s3">= </span><span class="s1">Calendar</span><span class="s3">.</span><span class="s1">getInstance</span><span class="s3">()</span>
+        <span class="s2">val </span><span class="s1">hour </span><span class="s3">= </span><span class="s1">calendar</span><span class="s3">.</span><span class="s1">get</span><span class="s3">(</span><span class="s1">Calendar</span><span class="s3">.</span><span class="s1">HOUR_OF_DAY</span><span class="s3">)</span>
+        <span class="s2">val </span><span class="s1">minute </span><span class="s3">= </span><span class="s1">calendar</span><span class="s3">.</span><span class="s1">get</span><span class="s3">(</span><span class="s1">Calendar</span><span class="s3">.</span><span class="s1">MINUTE</span><span class="s3">)</span>
+
+        <span class="s1">TimePickerDialog</span><span class="s3">(</span>
+            <span class="s1">context</span><span class="s3">,</span>
+            <span class="s3">{ </span><span class="s1">_</span><span class="s3">, </span><span class="s1">hourOfDay</span><span class="s3">, </span><span class="s1">minuteOfHour </span><span class="s3">-&gt;</span>
+                <span class="s1">startTime </span><span class="s3">= </span><span class="s1">String</span><span class="s3">.</span><span class="s1">format</span><span class="s3">(</span><span class="s4">&quot;%02d:%02d&quot;</span><span class="s3">, </span><span class="s1">hourOfDay</span><span class="s3">, </span><span class="s1">minuteOfHour</span><span class="s3">)</span>
+            <span class="s3">},</span>
+            <span class="s1">hour</span><span class="s3">,</span>
+            <span class="s1">minute</span><span class="s3">,</span>
+            <span class="s2">true</span>
+        <span class="s3">).</span><span class="s1">show</span><span class="s3">()</span>
+    <span class="s3">}</span>
+
+    <span class="s1">Column</span><span class="s3">(</span><span class="s1">modifier </span><span class="s3">= </span><span class="s1">Modifier</span><span class="s3">.</span><span class="s1">padding</span><span class="s3">(</span><span class="s5">16</span><span class="s3">.</span><span class="s1">dp</span><span class="s3">)) {</span>
+        <span class="s1">Row</span><span class="s3">(</span><span class="s1">verticalAlignment </span><span class="s3">= </span><span class="s1">Alignment</span><span class="s3">.</span><span class="s1">CenterVertically</span><span class="s3">) {</span>
+            <span class="s1">Text</span><span class="s3">(</span><span class="s4">&quot;Input Names:&quot;</span><span class="s3">)</span>
+            <span class="s1">Spacer</span><span class="s3">(</span><span class="s1">modifier </span><span class="s3">= </span><span class="s1">Modifier</span><span class="s3">.</span><span class="s1">width</span><span class="s3">(</span><span class="s5">8</span><span class="s3">.</span><span class="s1">dp</span><span class="s3">))</span>
+            <span class="s1">Switch</span><span class="s3">(</span>
+                <span class="s1">checked </span><span class="s3">= </span><span class="s1">officerCountInputMode</span><span class="s3">,</span>
+                <span class="s1">onCheckedChange </span><span class="s3">= { </span><span class="s1">officerCountInputMode </span><span class="s3">= </span><span class="s1">it </span><span class="s3">}</span>
+            <span class="s3">)</span>
+        <span class="s3">}</span>
+
+        <span class="s1">Spacer</span><span class="s3">(</span><span class="s1">modifier </span><span class="s3">= </span><span class="s1">Modifier</span><span class="s3">.</span><span class="s1">height</span><span class="s3">(</span><span class="s5">8</span><span class="s3">.</span><span class="s1">dp</span><span class="s3">))</span>
+
+        <span class="s2">if </span><span class="s3">(!</span><span class="s1">officerCountInputMode</span><span class="s3">) {</span>
+            <span class="s1">OutlinedTextField</span><span class="s3">(</span>
+                <span class="s1">value </span><span class="s3">= </span><span class="s1">name</span><span class="s3">,</span>
+                <span class="s1">onValueChange </span><span class="s3">= { </span><span class="s1">name </span><span class="s3">= </span><span class="s1">it </span><span class="s3">},</span>
+                <span class="s1">label </span><span class="s3">= { </span><span class="s1">Text</span><span class="s3">(</span><span class="s4">&quot;Officer Name&quot;</span><span class="s3">) },</span>
+                <span class="s1">modifier </span><span class="s3">= </span><span class="s1">Modifier</span><span class="s3">.</span><span class="s1">fillMaxWidth</span><span class="s3">(),</span>
+                <span class="s1">isError </span><span class="s3">= </span><span class="s1">name</span><span class="s3">.</span><span class="s1">isBlank</span><span class="s3">()</span>
+            <span class="s3">)</span>
+        <span class="s3">} </span><span class="s2">else </span><span class="s3">{</span>
+            <span class="s1">OutlinedTextField</span><span class="s3">(</span>
+                <span class="s1">value </span><span class="s3">= </span><span class="s1">officerCount</span><span class="s3">.</span><span class="s1">toString</span><span class="s3">(),</span>
+                <span class="s1">onValueChange </span><span class="s3">= {</span>
+                    <span class="s1">officerCount </span><span class="s3">= </span><span class="s1">it</span><span class="s3">.</span><span class="s1">toIntOrNull</span><span class="s3">() </span><span class="s1">?: </span><span class="s5">1</span>
+                <span class="s3">},</span>
+                <span class="s1">label </span><span class="s3">= { </span><span class="s1">Text</span><span class="s3">(</span><span class="s4">&quot;Number of Officers&quot;</span><span class="s3">) },</span>
+                <span class="s1">keyboardOptions </span><span class="s3">= </span><span class="s1">KeyboardOptions</span><span class="s3">(</span><span class="s1">keyboardType </span><span class="s3">= </span><span class="s1">KeyboardType</span><span class="s3">.</span><span class="s1">Number</span><span class="s3">),</span>
+                <span class="s1">modifier </span><span class="s3">= </span><span class="s1">Modifier</span><span class="s3">.</span><span class="s1">fillMaxWidth</span><span class="s3">()</span>
+            <span class="s3">)</span>
+        <span class="s3">}</span>
+
+        <span class="s1">Spacer</span><span class="s3">(</span><span class="s1">modifier </span><span class="s3">= </span><span class="s1">Modifier</span><span class="s3">.</span><span class="s1">height</span><span class="s3">(</span><span class="s5">8</span><span class="s3">.</span><span class="s1">dp</span><span class="s3">))</span>
+
+        <span class="s1">ExposedDropdownMenuBox</span><span class="s3">(</span>
+            <span class="s1">expanded </span><span class="s3">= </span><span class="s1">certificationsExpanded</span><span class="s3">,</span>
+            <span class="s1">onExpandedChange </span><span class="s3">= { </span><span class="s1">certificationsExpanded </span><span class="s3">= !</span><span class="s1">certificationsExpanded </span><span class="s3">}</span>
+        <span class="s3">) {</span>
+            <span class="s1">TextField</span><span class="s3">(</span>
+                <span class="s1">modifier </span><span class="s3">= </span><span class="s1">Modifier</span>
+                    <span class="s3">.</span><span class="s1">menuAnchor</span><span class="s3">()</span>
+                    <span class="s3">.</span><span class="s1">fillMaxWidth</span><span class="s3">(),</span>
+                <span class="s1">readOnly </span><span class="s3">= </span><span class="s2">true</span><span class="s3">,</span>
+                <span class="s1">value </span><span class="s3">= </span><span class="s1">selectedCerts</span><span class="s3">.</span><span class="s1">joinToString</span><span class="s3">(</span><span class="s4">&quot;, &quot;</span><span class="s3">),</span>
+                <span class="s1">onValueChange </span><span class="s3">= {},</span>
+                <span class="s1">label </span><span class="s3">= { </span><span class="s1">Text</span><span class="s3">(</span><span class="s4">&quot;Certifications&quot;</span><span class="s3">) },</span>
+                <span class="s1">trailingIcon </span><span class="s3">= { </span><span class="s1">ExposedDropdownMenuDefaults</span><span class="s3">.</span><span class="s1">TrailingIcon</span><span class="s3">(</span><span class="s1">expanded </span><span class="s3">= </span><span class="s1">certificationsExpanded</span><span class="s3">) },</span>
+                <span class="s1">colors </span><span class="s3">= </span><span class="s1">ExposedDropdownMenuDefaults</span><span class="s3">.</span><span class="s1">textFieldColors</span><span class="s3">(),</span>
+            <span class="s3">)</span>
+            <span class="s1">ExposedDropdownMenu</span><span class="s3">(</span>
+                <span class="s1">expanded </span><span class="s3">= </span><span class="s1">certificationsExpanded</span><span class="s3">,</span>
+                <span class="s1">onDismissRequest </span><span class="s3">= { </span><span class="s1">certificationsExpanded </span><span class="s3">= </span><span class="s2">false </span><span class="s3">},</span>
+            <span class="s3">) {</span>
+                <span class="s1">availableCertifications</span><span class="s3">.</span><span class="s1">forEach </span><span class="s3">{ </span><span class="s1">certification </span><span class="s3">-&gt;</span>
+                    <span class="s1">DropdownMenuItem</span><span class="s3">(</span>
+                        <span class="s1">text </span><span class="s3">= { </span><span class="s1">Text</span><span class="s3">(</span><span class="s1">certification</span><span class="s3">) },</span>
+                        <span class="s1">onClick </span><span class="s3">= {</span>
+                            <span class="s2">if </span><span class="s3">(</span><span class="s1">selectedCerts</span><span class="s3">.</span><span class="s1">contains</span><span class="s3">(</span><span class="s1">certification</span><span class="s3">)) {</span>
+                                <span class="s1">selectedCerts </span><span class="s3">= </span><span class="s1">selectedCerts </span><span class="s3">- </span><span class="s1">certification</span>
+                            <span class="s3">} </span><span class="s2">else </span><span class="s3">{</span>
+                                <span class="s1">selectedCerts </span><span class="s3">= </span><span class="s1">selectedCerts </span><span class="s3">+ </span><span class="s1">certification</span>
+                            <span class="s3">}</span>
+                        <span class="s3">},</span>
+                        <span class="s1">contentPadding </span><span class="s3">= </span><span class="s1">ExposedDropdownMenuDefaults</span><span class="s3">.</span><span class="s1">ItemContentPadding</span><span class="s3">,</span>
+                    <span class="s3">)</span>
+                <span class="s3">}</span>
+            <span class="s3">}</span>
+        <span class="s3">}</span>
+        <span class="s1">Spacer</span><span class="s3">(</span><span class="s1">modifier </span><span class="s3">= </span><span class="s1">Modifier</span><span class="s3">.</span><span class="s1">height</span><span class="s3">(</span><span class="s5">8</span><span class="s3">.</span><span class="s1">dp</span><span class="s3">))</span>
+
+        <span class="s1">OutlinedTextField</span><span class="s3">(</span>
+            <span class="s1">value </span><span class="s3">= </span><span class="s1">startTime</span><span class="s3">,</span>
+            <span class="s1">onValueChange </span><span class="s3">= { </span><span class="s0">/* Read-only */ </span><span class="s3">},</span>
+            <span class="s1">label </span><span class="s3">= { </span><span class="s1">Text</span><span class="s3">(</span><span class="s4">&quot;Start Time&quot;</span><span class="s3">) },</span>
+            <span class="s1">modifier </span><span class="s3">= </span><span class="s1">Modifier</span>
+                <span class="s3">.</span><span class="s1">fillMaxWidth</span><span class="s3">()</span>
+                <span class="s3">.</span><span class="s1">clickable </span><span class="s3">{ </span><span class="s1">showTimePicker</span><span class="s3">() },</span>
+            <span class="s1">enabled </span><span class="s3">= </span><span class="s2">false</span><span class="s3">,</span>
+            <span class="s1">colors </span><span class="s3">= </span><span class="s1">ExposedDropdownMenuDefaults</span><span class="s3">.</span><span class="s1">textFieldColors</span><span class="s3">()</span>
+        <span class="s3">)</span>
+        <span class="s1">Spacer</span><span class="s3">(</span><span class="s1">modifier </span><span class="s3">= </span><span class="s1">Modifier</span><span class="s3">.</span><span class="s1">height</span><span class="s3">(</span><span class="s5">8</span><span class="s3">.</span><span class="s1">dp</span><span class="s3">))</span>
+
+        <span class="s1">Row</span><span class="s3">(</span><span class="s1">verticalAlignment </span><span class="s3">= </span><span class="s1">Alignment</span><span class="s3">.</span><span class="s1">CenterVertically</span><span class="s3">) {</span>
+            <span class="s1">genderOptions</span><span class="s3">.</span><span class="s1">forEach </span><span class="s3">{ </span><span class="s1">text </span><span class="s3">-&gt;</span>
+                <span class="s1">Row</span><span class="s3">(</span><span class="s1">verticalAlignment </span><span class="s3">= </span><span class="s1">Alignment</span><span class="s3">.</span><span class="s1">CenterVertically</span><span class="s3">) {</span>
+                    <span class="s1">RadioButton</span><span class="s3">(</span>
+                        <span class="s1">selected </span><span class="s3">= (</span><span class="s1">text </span><span class="s3">== </span><span class="s1">selectedGender</span><span class="s3">),</span>
+                        <span class="s1">onClick </span><span class="s3">= { </span><span class="s1">selectedGender </span><span class="s3">= </span><span class="s1">text </span><span class="s3">}</span>
+                    <span class="s3">)</span>
+                    <span class="s1">Text</span><span class="s3">(</span>
+                        <span class="s1">text </span><span class="s3">= </span><span class="s1">text</span><span class="s3">,</span>
+                        <span class="s1">modifier </span><span class="s3">= </span><span class="s1">Modifier</span><span class="s3">.</span><span class="s1">clickable</span><span class="s3">(</span><span class="s1">onClick </span><span class="s3">= { </span><span class="s1">selectedGender </span><span class="s3">= </span><span class="s1">text </span><span class="s3">})</span>
+                    <span class="s3">)</span>
+                <span class="s3">}</span>
+            <span class="s3">}</span>
+        <span class="s3">}</span>
+
+        <span class="s1">Spacer</span><span class="s3">(</span><span class="s1">modifier </span><span class="s3">= </span><span class="s1">Modifier</span><span class="s3">.</span><span class="s1">height</span><span class="s3">(</span><span class="s5">8</span><span class="s3">.</span><span class="s1">dp</span><span class="s3">))</span>
+
+        <span class="s1">Row</span><span class="s3">(</span><span class="s1">verticalAlignment </span><span class="s3">= </span><span class="s1">Alignment</span><span class="s3">.</span><span class="s1">CenterVertically</span><span class="s3">) {</span>
+            <span class="s1">Text</span><span class="s3">(</span><span class="s4">&quot;Full-Time&quot;</span><span class="s3">)</span>
+            <span class="s1">Spacer</span><span class="s3">(</span><span class="s1">modifier </span><span class="s3">= </span><span class="s1">Modifier</span><span class="s3">.</span><span class="s1">width</span><span class="s3">(</span><span class="s5">8</span><span class="s3">.</span><span class="s1">dp</span><span class="s3">))</span>
+            <span class="s1">Switch</span><span class="s3">(</span>
+                <span class="s1">checked </span><span class="s3">= </span><span class="s1">isFullTime</span><span class="s3">,</span>
+                <span class="s1">onCheckedChange </span><span class="s3">= { </span><span class="s1">isFullTime </span><span class="s3">= </span><span class="s1">it </span><span class="s3">}</span>
+            <span class="s3">)</span>
+        <span class="s3">}</span>
+        <span class="s1">Spacer</span><span class="s3">(</span><span class="s1">modifier </span><span class="s3">= </span><span class="s1">Modifier</span><span class="s3">.</span><span class="s1">height</span><span class="s3">(</span><span class="s5">8</span><span class="s3">.</span><span class="s1">dp</span><span class="s3">))</span>
+
+        <span class="s1">ExposedDropdownMenuBox</span><span class="s3">(</span>
+            <span class="s1">expanded </span><span class="s3">= </span><span class="s1">checkpointExpanded</span><span class="s3">,</span>
+            <span class="s1">onExpandedChange </span><span class="s3">= { </span><span class="s1">checkpointExpanded </span><span class="s3">= !</span><span class="s1">checkpointExpanded </span><span class="s3">}</span>
+        <span class="s3">) {</span>
+            <span class="s1">TextField</span><span class="s3">(</span>
+                <span class="s1">modifier </span><span class="s3">= </span><span class="s1">Modifier</span>
+                    <span class="s3">.</span><span class="s1">menuAnchor</span><span class="s3">()</span>
+                    <span class="s3">.</span><span class="s1">fillMaxWidth</span><span class="s3">(),</span>
+                <span class="s1">readOnly </span><span class="s3">= </span><span class="s2">true</span><span class="s3">,</span>
+                <span class="s1">value </span><span class="s3">= </span><span class="s1">selectedCheckpoint</span><span class="s3">,</span>
+                <span class="s1">onValueChange </span><span class="s3">= {},</span>
+                <span class="s1">label </span><span class="s3">= { </span><span class="s1">Text</span><span class="s3">(</span><span class="s4">&quot;Checkpoint&quot;</span><span class="s3">) },</span>
+                <span class="s1">trailingIcon </span><span class="s3">= { </span><span class="s1">ExposedDropdownMenuDefaults</span><span class="s3">.</span><span class="s1">TrailingIcon</span><span class="s3">(</span><span class="s1">expanded </span><span class="s3">= </span><span class="s1">checkpointExpanded</span><span class="s3">) },</span>
+                <span class="s1">colors </span><span class="s3">= </span><span class="s1">ExposedDropdownMenuDefaults</span><span class="s3">.</span><span class="s1">textFieldColors</span><span class="s3">()</span>
+            <span class="s3">)</span>
+            <span class="s1">ExposedDropdownMenu</span><span class="s3">(</span>
+                <span class="s1">expanded </span><span class="s3">= </span><span class="s1">checkpointExpanded</span><span class="s3">,</span>
+                <span class="s1">onDismissRequest </span><span class="s3">= { </span><span class="s1">checkpointExpanded </span><span class="s3">= </span><span class="s2">false </span><span class="s3">},</span>
+            <span class="s3">) {</span>
+                <span class="s1">checkpoints</span><span class="s3">.</span><span class="s1">forEach </span><span class="s3">{ </span><span class="s1">checkpoint </span><span class="s3">-&gt;</span>
+                    <span class="s1">DropdownMenuItem</span><span class="s3">(</span>
+                        <span class="s1">text </span><span class="s3">= { </span><span class="s1">Text</span><span class="s3">(</span><span class="s1">checkpoint</span><span class="s3">) },</span>
+                        <span class="s1">onClick </span><span class="s3">= {</span>
+                            <span class="s1">selectedCheckpoint </span><span class="s3">= </span><span class="s1">checkpoint</span>
+                            <span class="s1">checkpointExpanded </span><span class="s3">= </span><span class="s2">false</span>
+                            <span class="s1">selectedLane </span><span class="s3">= </span><span class="s4">&quot;&quot;</span>
+                        <span class="s3">},</span>
+                        <span class="s1">contentPadding </span><span class="s3">= </span><span class="s1">ExposedDropdownMenuDefaults</span><span class="s3">.</span><span class="s1">ItemContentPadding</span>
+                    <span class="s3">)</span>
+                <span class="s3">}</span>
+            <span class="s3">}</span>
+        <span class="s3">}</span>
+        <span class="s1">Spacer</span><span class="s3">(</span><span class="s1">modifier </span><span class="s3">= </span><span class="s1">Modifier</span><span class="s3">.</span><span class="s1">height</span><span class="s3">(</span><span class="s5">8</span><span class="s3">.</span><span class="s1">dp</span><span class="s3">))</span>
+
+        <span class="s1">ExposedDropdownMenuBox</span><span class="s3">(</span>
+            <span class="s1">expanded </span><span class="s3">= </span><span class="s1">laneExpanded</span><span class="s3">,</span>
+            <span class="s1">onExpandedChange </span><span class="s3">= { </span><span class="s1">laneExpanded </span><span class="s3">= !</span><span class="s1">laneExpanded </span><span class="s3">}</span>
+        <span class="s3">) {</span>
+            <span class="s1">TextField</span><span class="s3">(</span>
+                <span class="s1">modifier </span><span class="s3">= </span><span class="s1">Modifier</span>
+                    <span class="s3">.</span><span class="s1">menuAnchor</span><span class="s3">()</span>
+                    <span class="s3">.</span><span class="s1">fillMaxWidth</span><span class="s3">(),</span>
+                <span class="s1">readOnly </span><span class="s3">= </span><span class="s2">true</span><span class="s3">,</span>
+                <span class="s1">value </span><span class="s3">= </span><span class="s1">selectedLane</span><span class="s3">,</span>
+                <span class="s1">onValueChange </span><span class="s3">= {},</span>
+                <span class="s1">label </span><span class="s3">= { </span><span class="s1">Text</span><span class="s3">(</span><span class="s4">&quot;Lane&quot;</span><span class="s3">) },</span>
+                <span class="s1">trailingIcon </span><span class="s3">= { </span><span class="s1">ExposedDropdownMenuDefaults</span><span class="s3">.</span><span class="s1">TrailingIcon</span><span class="s3">(</span><span class="s1">expanded </span><span class="s3">= </span><span class="s1">laneExpanded</span><span class="s3">) },</span>
+                <span class="s1">colors </span><span class="s3">= </span><span class="s1">ExposedDropdownMenuDefaults</span><span class="s3">.</span><span class="s1">textFieldColors</span><span class="s3">(),</span>
+                <span class="s1">enabled </span><span class="s3">= </span><span class="s1">selectedCheckpoint</span><span class="s3">.</span><span class="s1">isNotBlank</span><span class="s3">()</span>
+            <span class="s3">)</span>
+            <span class="s1">ExposedDropdownMenu</span><span class="s3">(</span>
+                <span class="s1">expanded </span><span class="s3">= </span><span class="s1">laneExpanded</span><span class="s3">,</span>
+                <span class="s1">onDismissRequest </span><span class="s3">= { </span><span class="s1">laneExpanded </span><span class="s3">= </span><span class="s2">false </span><span class="s3">},</span>
+            <span class="s3">) {</span>
+                <span class="s2">val </span><span class="s1">filteredLanes </span><span class="s3">= </span><span class="s2">if </span><span class="s3">(</span><span class="s1">selectedCheckpoint </span><span class="s3">== </span><span class="s4">&quot;Checkpoint-Wide&quot;</span><span class="s3">) {</span>
+                    <span class="s1">lanes</span>
+                <span class="s3">} </span><span class="s2">else </span><span class="s3">{</span>
+                    <span class="s1">lanes</span><span class="s3">.</span><span class="s1">filter </span><span class="s3">{ </span><span class="s1">it</span><span class="s3">.</span><span class="s1">startsWith</span><span class="s3">(</span><span class="s4">&quot;Lane&quot;</span><span class="s3">) }</span>
+                <span class="s3">}</span>
+
+                <span class="s1">filteredLanes</span><span class="s3">.</span><span class="s1">forEach </span><span class="s3">{ </span><span class="s1">lane </span><span class="s3">-&gt;</span>
+                    <span class="s1">DropdownMenuItem</span><span class="s3">(</span>
+                        <span class="s1">text </span><span class="s3">= { </span><span class="s1">Text</span><span class="s3">(</span><span class="s1">lane</span><span class="s3">) },</span>
+                        <span class="s1">onClick </span><span class="s3">= {</span>
+                            <span class="s1">selectedLane </span><span class="s3">= </span><span class="s1">lane</span>
+                            <span class="s1">laneExpanded </span><span class="s3">= </span><span class="s2">false</span>
+                        <span class="s3">},</span>
+                        <span class="s1">contentPadding </span><span class="s3">= </span><span class="s1">ExposedDropdownMenuDefaults</span><span class="s3">.</span><span class="s1">ItemContentPadding</span>
+                    <span class="s3">)</span>
+                <span class="s3">}</span>
+            <span class="s3">}</span>
+        <span class="s3">}</span>
+        <span class="s1">Spacer</span><span class="s3">(</span><span class="s1">modifier </span><span class="s3">= </span><span class="s1">Modifier</span><span class="s3">.</span><span class="s1">height</span><span class="s3">(</span><span class="s5">8</span><span class="s3">.</span><span class="s1">dp</span><span class="s3">))</span>
+
+        <span class="s1">OutlinedTextField</span><span class="s3">(</span>
+            <span class="s1">value </span><span class="s3">= </span><span class="s1">lead</span><span class="s3">,</span>
+            <span class="s1">onValueChange </span><span class="s3">= { </span><span class="s1">lead </span><span class="s3">= </span><span class="s1">it </span><span class="s3">},</span>
+            <span class="s1">label </span><span class="s3">= { </span><span class="s1">Text</span><span class="s3">(</span><span class="s4">&quot;Lead&quot;</span><span class="s3">) },</span>
+            <span class="s1">modifier </span><span class="s3">= </span><span class="s1">Modifier</span><span class="s3">.</span><span class="s1">fillMaxWidth</span><span class="s3">()</span>
+        <span class="s3">)</span>
+        <span class="s1">Spacer</span><span class="s3">(</span><span class="s1">modifier </span><span class="s3">= </span><span class="s1">Modifier</span><span class="s3">.</span><span class="s1">height</span><span class="s3">(</span><span class="s5">8</span><span class="s3">.</span><span class="s1">dp</span><span class="s3">))</span>
+
+        <span class="s1">OutlinedTextField</span><span class="s3">(</span>
+            <span class="s1">value </span><span class="s3">= </span><span class="s1">supervisor</span><span class="s3">,</span>
+            <span class="s1">onValueChange </span><span class="s3">= { </span><span class="s1">supervisor </span><span class="s3">= </span><span class="s1">it </span><span class="s3">},</span>
+            <span class="s1">label </span><span class="s3">= { </span><span class="s1">Text</span><span class="s3">(</span><span class="s4">&quot;Supervisor&quot;</span><span class="s3">) },</span>
+            <span class="s1">modifier </span><span class="s3">= </span><span class="s1">Modifier</span><span class="s3">.</span><span class="s1">fillMaxWidth</span><span class="s3">()</span>
+        <span class="s3">)</span>
+        <span class="s1">Spacer</span><span class="s3">(</span><span class="s1">modifier </span><span class="s3">= </span><span class="s1">Modifier</span><span class="s3">.</span><span class="s1">height</span><span class="s3">(</span><span class="s5">16</span><span class="s3">.</span><span class="s1">dp</span><span class="s3">))</span>
+
+        <span class="s0">// Use LaunchedEffect to delay the updates</span>
+        <span class="s1">Button</span><span class="s3">(</span><span class="s1">onClick </span><span class="s3">= {</span>
+            <span class="s1">coroutineScope</span><span class="s3">.</span><span class="s1">launch </span><span class="s3">{ </span><span class="s0">// Launch a coroutine</span>
+                <span class="s2">if </span><span class="s3">(!</span><span class="s1">officerCountInputMode </span><span class="s3">&amp;&amp; </span><span class="s1">name</span><span class="s3">.</span><span class="s1">isNotBlank</span><span class="s3">()) {</span>
+                    <span class="s1">onAddOfficer</span><span class="s3">(</span><span class="s1">name</span><span class="s3">, </span><span class="s1">selectedCerts</span><span class="s3">, </span><span class="s1">startTime</span><span class="s3">, </span><span class="s1">selectedGender</span><span class="s3">, </span><span class="s1">isFullTime</span><span class="s3">, </span><span class="s5">1</span><span class="s3">)</span>
+                    <span class="s1">name </span><span class="s3">= </span><span class="s4">&quot;&quot;</span>
+                    <span class="s1">selectedCerts </span><span class="s3">= </span><span class="s1">listOf</span><span class="s3">()</span>
+                    <span class="s1">startTime </span><span class="s3">= </span><span class="s4">&quot;08:00&quot;</span>
+                    <span class="s1">selectedGender </span><span class="s3">= </span><span class="s1">genderOptions</span><span class="s3">[</span><span class="s5">0</span><span class="s3">]</span>
+                    <span class="s1">isFullTime </span><span class="s3">= </span><span class="s2">true</span>
+                <span class="s3">} </span><span class="s2">else if </span><span class="s3">(</span><span class="s1">officerCountInputMode </span><span class="s3">&amp;&amp; </span><span class="s1">officerCount </span><span class="s3">&gt; </span><span class="s5">0</span><span class="s3">) {</span>
+                    <span class="s1">onAddOfficer</span><span class="s3">(</span><span class="s4">&quot;&quot;</span><span class="s3">, </span><span class="s1">selectedCerts</span><span class="s3">, </span><span class="s1">startTime</span><span class="s3">, </span><span class="s1">selectedGender</span><span class="s3">, </span><span class="s1">isFullTime</span><span class="s3">, </span><span class="s1">officerCount</span><span class="s3">)</span>
+                <span class="s3">}</span>
+            <span class="s3">}</span>
+        <span class="s3">}) {</span>
+            <span class="s1">Text</span><span class="s3">(</span><span class="s4">&quot;Add Officer(s)&quot;</span><span class="s3">)</span>
+        <span class="s3">}</span>
+    <span class="s3">}</span>
+<span class="s3">}</span></pre>
+</body>
+</html>

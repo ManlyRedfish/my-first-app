@@ -1,0 +1,36 @@
+<html>
+<head>
+<title>MyApplication.kt</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<style type="text/css">
+.s0 { color: #cf8e6d;}
+.s1 { color: #bcbec4;}
+.s2 { color: #bcbec4;}
+</style>
+</head>
+<body bgcolor="#1e1f22">
+<table CELLSPACING=0 CELLPADDING=5 COLS=1 WIDTH="100%" BGCOLOR="#606060" >
+<tr><td><center>
+<font face="Arial, Helvetica" color="#000000">
+MyApplication.kt</font>
+</center></td></tr></table>
+<pre><span class="s0">package </span><span class="s1">com</span><span class="s2">.</span><span class="s1">example</span><span class="s2">.</span><span class="s1">rotationappv10</span>
+
+<span class="s1">import android</span><span class="s2">.</span><span class="s1">app</span><span class="s2">.</span><span class="s1">Application</span>
+<span class="s1">import android</span><span class="s2">.</span><span class="s1">content</span><span class="s2">.</span><span class="s1">Context</span>
+
+<span class="s0">class </span><span class="s1">MyApplication : Application</span><span class="s2">() {</span>
+    <span class="s1">init </span><span class="s2">{</span>
+        <span class="s1">instance </span><span class="s2">= </span><span class="s0">this</span>
+    <span class="s2">}</span>
+
+    <span class="s1">companion </span><span class="s0">object </span><span class="s2">{</span>
+        <span class="s1">private </span><span class="s0">var </span><span class="s1">instance: MyApplication? </span><span class="s2">= </span><span class="s0">null</span>
+
+        <span class="s0">fun </span><span class="s1">applicationContext</span><span class="s2">() </span><span class="s1">: Context </span><span class="s2">{</span>
+            <span class="s0">return </span><span class="s1">instance</span><span class="s2">!!.</span><span class="s1">applicationContext</span>
+        <span class="s2">}</span>
+    <span class="s2">}</span>
+<span class="s2">}</span></pre>
+</body>
+</html>

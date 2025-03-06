@@ -1,0 +1,182 @@
+<html>
+<head>
+<title>MainInputScreen.kt</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<style type="text/css">
+.s0 { color: #7a7e85;}
+.s1 { color: #bcbec4;}
+.s2 { color: #cf8e6d;}
+.s3 { color: #bcbec4;}
+.s4 { color: #6aab73;}
+.s5 { color: #2aacb8;}
+</style>
+</head>
+<body bgcolor="#1e1f22">
+<table CELLSPACING=0 CELLPADDING=5 COLS=1 WIDTH="100%" BGCOLOR="#606060" >
+<tr><td><center>
+<font face="Arial, Helvetica" color="#000000">
+MainInputScreen.kt</font>
+</center></td></tr></table>
+<pre><span class="s0">// File: ui/main/MainInputScreen.kt</span>
+<span class="s2">package </span><span class="s1">com</span><span class="s3">.</span><span class="s1">example</span><span class="s3">.</span><span class="s1">rotationappv10</span><span class="s3">.</span><span class="s1">ui</span><span class="s3">.</span><span class="s1">main</span>
+
+<span class="s1">import android</span><span class="s3">.</span><span class="s1">app</span><span class="s3">.</span><span class="s1">DatePickerDialog</span>
+<span class="s1">import android</span><span class="s3">.</span><span class="s1">app</span><span class="s3">.</span><span class="s1">TimePickerDialog</span>
+<span class="s1">import androidx</span><span class="s3">.</span><span class="s1">compose</span><span class="s3">.</span><span class="s1">foundation</span><span class="s3">.</span><span class="s1">clickable</span>
+<span class="s1">import androidx</span><span class="s3">.</span><span class="s1">compose</span><span class="s3">.</span><span class="s1">foundation</span><span class="s3">.</span><span class="s1">layout</span><span class="s3">.*</span>
+<span class="s1">import androidx</span><span class="s3">.</span><span class="s1">compose</span><span class="s3">.</span><span class="s1">material3</span><span class="s3">.</span><span class="s1">Button</span>
+<span class="s1">import androidx</span><span class="s3">.</span><span class="s1">compose</span><span class="s3">.</span><span class="s1">material3</span><span class="s3">.</span><span class="s1">MaterialTheme</span>
+<span class="s1">import androidx</span><span class="s3">.</span><span class="s1">compose</span><span class="s3">.</span><span class="s1">material3</span><span class="s3">.</span><span class="s1">RadioButton</span>
+<span class="s1">import androidx</span><span class="s3">.</span><span class="s1">compose</span><span class="s3">.</span><span class="s1">material3</span><span class="s3">.</span><span class="s1">Text</span>
+<span class="s1">import androidx</span><span class="s3">.</span><span class="s1">compose</span><span class="s3">.</span><span class="s1">runtime</span><span class="s3">.*</span>
+<span class="s1">import androidx</span><span class="s3">.</span><span class="s1">compose</span><span class="s3">.</span><span class="s1">ui</span><span class="s3">.</span><span class="s1">Alignment</span>
+<span class="s1">import androidx</span><span class="s3">.</span><span class="s1">compose</span><span class="s3">.</span><span class="s1">ui</span><span class="s3">.</span><span class="s1">Modifier</span>
+<span class="s1">import androidx</span><span class="s3">.</span><span class="s1">compose</span><span class="s3">.</span><span class="s1">ui</span><span class="s3">.</span><span class="s1">platform</span><span class="s3">.</span><span class="s1">LocalContext</span>
+<span class="s1">import androidx</span><span class="s3">.</span><span class="s1">compose</span><span class="s3">.</span><span class="s1">ui</span><span class="s3">.</span><span class="s1">tooling</span><span class="s3">.</span><span class="s1">preview</span><span class="s3">.</span><span class="s1">Preview</span>
+<span class="s1">import androidx</span><span class="s3">.</span><span class="s1">compose</span><span class="s3">.</span><span class="s1">ui</span><span class="s3">.</span><span class="s1">unit</span><span class="s3">.</span><span class="s1">dp</span>
+<span class="s1">import androidx</span><span class="s3">.</span><span class="s1">lifecycle</span><span class="s3">.</span><span class="s1">viewmodel</span><span class="s3">.</span><span class="s1">compose</span><span class="s3">.</span><span class="s1">viewModel</span>
+<span class="s1">import com</span><span class="s3">.</span><span class="s1">example</span><span class="s3">.</span><span class="s1">rotationappv10</span><span class="s3">.</span><span class="s1">viewmodel</span><span class="s3">.</span><span class="s1">MainViewModel</span>
+<span class="s1">import java</span><span class="s3">.</span><span class="s1">time</span><span class="s3">.</span><span class="s1">LocalTime</span>
+<span class="s1">import java</span><span class="s3">.</span><span class="s1">time</span><span class="s3">.</span><span class="s1">format</span><span class="s3">.</span><span class="s1">DateTimeFormatter</span>
+<span class="s1">import java</span><span class="s3">.</span><span class="s1">util</span><span class="s3">.</span><span class="s1">Calendar</span>
+
+<span class="s1">@Composable</span>
+<span class="s2">fun </span><span class="s1">MainInputScreen</span><span class="s3">(</span><span class="s1">onGenerateRotation: </span><span class="s3">(</span><span class="s1">Calendar?</span><span class="s3">) -&gt; </span><span class="s1">Unit</span><span class="s3">) {</span>
+    <span class="s2">val </span><span class="s1">viewModel: MainViewModel </span><span class="s3">= </span><span class="s1">viewModel</span><span class="s3">()</span>
+    <span class="s2">var </span><span class="s1">selectedDate by remember </span><span class="s3">{ </span><span class="s1">mutableStateOf</span><span class="s3">&lt;</span><span class="s1">Calendar?</span><span class="s3">&gt;(</span><span class="s2">null</span><span class="s3">) }</span>
+    <span class="s2">val </span><span class="s1">context </span><span class="s3">= </span><span class="s1">LocalContext</span><span class="s3">.</span><span class="s1">current</span>
+    <span class="s2">val </span><span class="s1">calendar </span><span class="s3">= </span><span class="s1">Calendar</span><span class="s3">.</span><span class="s1">getInstance</span><span class="s3">()</span>
+
+    <span class="s2">var </span><span class="s1">selectedShift by remember </span><span class="s3">{ </span><span class="s1">mutableStateOf</span><span class="s3">(</span><span class="s4">&quot;AM&quot;</span><span class="s3">) }</span>
+    <span class="s2">val </span><span class="s1">selectedTime by viewModel</span><span class="s3">.</span><span class="s1">selectedShiftTime</span><span class="s3">.</span><span class="s1">collectAsState</span><span class="s3">()</span>
+
+    <span class="s0">// Get state from ViewModel -  CORRECTED collectAsState usage</span>
+    <span class="s2">val </span><span class="s1">selectedCheckpoint by viewModel</span><span class="s3">.</span><span class="s1">selectedCheckpoint</span><span class="s3">.</span><span class="s1">collectAsState</span><span class="s3">()</span>
+    <span class="s2">val </span><span class="s1">selectedLane by viewModel</span><span class="s3">.</span><span class="s1">selectedLane</span><span class="s3">.</span><span class="s1">collectAsState</span><span class="s3">()</span>
+    <span class="s2">val </span><span class="s1">selectedLead by viewModel</span><span class="s3">.</span><span class="s1">selectedLead</span><span class="s3">.</span><span class="s1">collectAsState</span><span class="s3">()</span>
+    <span class="s2">val </span><span class="s1">selectedSupervisor by viewModel</span><span class="s3">.</span><span class="s1">selectedSupervisor</span><span class="s3">.</span><span class="s1">collectAsState</span><span class="s3">()</span>
+
+
+    <span class="s2">val </span><span class="s1">dateSetListener </span><span class="s3">= </span><span class="s1">DatePickerDialog</span><span class="s3">.</span><span class="s1">OnDateSetListener </span><span class="s3">{ </span><span class="s1">_</span><span class="s3">, </span><span class="s1">year</span><span class="s3">, </span><span class="s1">month</span><span class="s3">, </span><span class="s1">dayOfMonth </span><span class="s3">-&gt;</span>
+        <span class="s2">val </span><span class="s1">newCalendar </span><span class="s3">= </span><span class="s1">Calendar</span><span class="s3">.</span><span class="s1">getInstance</span><span class="s3">()</span>
+        <span class="s1">newCalendar</span><span class="s3">.</span><span class="s1">set</span><span class="s3">(</span><span class="s1">year</span><span class="s3">, </span><span class="s1">month</span><span class="s3">, </span><span class="s1">dayOfMonth</span><span class="s3">)</span>
+        <span class="s1">selectedDate </span><span class="s3">= </span><span class="s1">newCalendar</span>
+        <span class="s1">viewModel</span><span class="s3">.</span><span class="s1">updateSelectedDate</span><span class="s3">(</span><span class="s1">newCalendar</span><span class="s3">.</span><span class="s1">toInstant</span><span class="s3">().</span><span class="s1">atZone</span><span class="s3">(</span><span class="s1">java</span><span class="s3">.</span><span class="s1">time</span><span class="s3">.</span><span class="s1">ZoneId</span><span class="s3">.</span><span class="s1">systemDefault</span><span class="s3">()).</span><span class="s1">toLocalDate</span><span class="s3">())</span>
+    <span class="s3">}</span>
+
+    <span class="s2">val </span><span class="s1">datePickerDialog </span><span class="s3">= </span><span class="s1">DatePickerDialog</span><span class="s3">(</span>
+        <span class="s1">context</span><span class="s3">,</span>
+        <span class="s1">dateSetListener</span><span class="s3">,</span>
+        <span class="s1">calendar</span><span class="s3">.</span><span class="s1">get</span><span class="s3">(</span><span class="s1">Calendar</span><span class="s3">.</span><span class="s1">YEAR</span><span class="s3">),</span>
+        <span class="s1">calendar</span><span class="s3">.</span><span class="s1">get</span><span class="s3">(</span><span class="s1">Calendar</span><span class="s3">.</span><span class="s1">MONTH</span><span class="s3">),</span>
+        <span class="s1">calendar</span><span class="s3">.</span><span class="s1">get</span><span class="s3">(</span><span class="s1">Calendar</span><span class="s3">.</span><span class="s1">DAY_OF_MONTH</span><span class="s3">)</span>
+    <span class="s3">)</span>
+
+    <span class="s2">val </span><span class="s1">timePickerDialog </span><span class="s3">= </span><span class="s1">TimePickerDialog</span><span class="s3">(</span>
+        <span class="s1">context</span><span class="s3">,</span>
+        <span class="s3">{ </span><span class="s1">_</span><span class="s3">, </span><span class="s1">hourOfDay</span><span class="s3">, </span><span class="s1">minute </span><span class="s3">-&gt;</span>
+            <span class="s1">viewModel</span><span class="s3">.</span><span class="s1">updateSelectedShiftTime</span><span class="s3">(</span><span class="s1">LocalTime</span><span class="s3">.</span><span class="s1">of</span><span class="s3">(</span><span class="s1">hourOfDay</span><span class="s3">, </span><span class="s1">minute</span><span class="s3">))</span>
+        <span class="s3">},</span>
+        <span class="s1">selectedTime?</span><span class="s3">.</span><span class="s1">hour ?: LocalTime</span><span class="s3">.</span><span class="s1">now</span><span class="s3">().</span><span class="s1">hour</span><span class="s3">,</span>
+        <span class="s1">selectedTime?</span><span class="s3">.</span><span class="s1">minute ?: LocalTime</span><span class="s3">.</span><span class="s1">now</span><span class="s3">().</span><span class="s1">minute</span><span class="s3">,</span>
+        <span class="s2">false </span><span class="s0">// Use AM/PM format</span>
+    <span class="s3">)</span>
+
+    <span class="s1">Column</span><span class="s3">(</span>
+        <span class="s1">modifier </span><span class="s3">= </span><span class="s1">Modifier</span>
+            <span class="s3">.</span><span class="s1">fillMaxSize</span><span class="s3">()</span>
+            <span class="s3">.</span><span class="s1">padding</span><span class="s3">(</span><span class="s5">16</span><span class="s3">.</span><span class="s1">dp</span><span class="s3">),</span>
+        <span class="s1">horizontalAlignment </span><span class="s3">= </span><span class="s1">Alignment</span><span class="s3">.</span><span class="s1">CenterHorizontally</span><span class="s3">,</span>
+        <span class="s1">verticalArrangement </span><span class="s3">= </span><span class="s1">Arrangement</span><span class="s3">.</span><span class="s1">Top</span>
+    <span class="s3">) {</span>
+        <span class="s1">OfficerInputForm</span><span class="s3">(</span><span class="s1">onAddOfficer </span><span class="s3">= { </span><span class="s1">name</span><span class="s3">, </span><span class="s1">certifications</span><span class="s3">, </span><span class="s1">startTime</span><span class="s3">, </span><span class="s1">gender</span><span class="s3">, </span><span class="s1">isFullTime</span><span class="s3">, </span><span class="s1">officerCount </span><span class="s3">-&gt;</span>
+            <span class="s2">if </span><span class="s3">(</span><span class="s1">name</span><span class="s3">.</span><span class="s1">isNotBlank</span><span class="s3">()) {</span>
+                <span class="s1">viewModel</span><span class="s3">.</span><span class="s1">addOfficer</span><span class="s3">(</span><span class="s1">name</span><span class="s3">, </span><span class="s1">certifications</span><span class="s3">, </span><span class="s1">startTime</span><span class="s3">, </span><span class="s1">gender</span><span class="s3">, </span><span class="s1">isFullTime</span><span class="s3">)</span>
+            <span class="s3">} </span><span class="s2">else </span><span class="s3">{</span>
+                <span class="s2">for </span><span class="s3">(</span><span class="s1">i </span><span class="s2">in </span><span class="s5">1</span><span class="s3">..</span><span class="s1">officerCount</span><span class="s3">) {</span>
+                    <span class="s1">viewModel</span><span class="s3">.</span><span class="s1">addOfficer</span><span class="s3">(</span><span class="s4">&quot;Officer </span><span class="s2">$</span><span class="s1">i</span><span class="s4">&quot;</span><span class="s3">, </span><span class="s1">certifications</span><span class="s3">, </span><span class="s1">startTime</span><span class="s3">, </span><span class="s1">gender</span><span class="s3">, </span><span class="s1">isFullTime</span><span class="s3">)</span>
+                <span class="s3">}</span>
+            <span class="s3">}</span>
+        <span class="s3">})</span>
+        <span class="s1">Spacer</span><span class="s3">(</span><span class="s1">modifier </span><span class="s3">= </span><span class="s1">Modifier</span><span class="s3">.</span><span class="s1">height</span><span class="s3">(</span><span class="s5">16</span><span class="s3">.</span><span class="s1">dp</span><span class="s3">))</span>
+
+        <span class="s1">Button</span><span class="s3">(</span><span class="s1">onClick </span><span class="s3">= { </span><span class="s1">datePickerDialog</span><span class="s3">.</span><span class="s1">show</span><span class="s3">() }) {</span>
+            <span class="s1">Text</span><span class="s3">(</span><span class="s1">text </span><span class="s3">= </span><span class="s1">selectedDate?</span><span class="s3">.</span><span class="s1">let </span><span class="s3">{</span>
+                <span class="s4">&quot;</span><span class="s2">${</span><span class="s1">it</span><span class="s3">.</span><span class="s1">get</span><span class="s3">(</span><span class="s1">Calendar</span><span class="s3">.</span><span class="s1">MONTH</span><span class="s3">) + </span><span class="s5">1</span><span class="s2">}</span><span class="s4">/</span><span class="s2">${</span><span class="s1">it</span><span class="s3">.</span><span class="s1">get</span><span class="s3">(</span><span class="s1">Calendar</span><span class="s3">.</span><span class="s1">DAY_OF_MONTH</span><span class="s3">)</span><span class="s2">}</span><span class="s4">/</span><span class="s2">${</span><span class="s1">it</span><span class="s3">.</span><span class="s1">get</span><span class="s3">(</span><span class="s1">Calendar</span><span class="s3">.</span><span class="s1">YEAR</span><span class="s3">)</span><span class="s2">}</span><span class="s4">&quot;</span>
+            <span class="s3">} </span><span class="s1">?: </span><span class="s4">&quot;Select Date&quot;</span><span class="s3">)</span>
+        <span class="s3">}</span>
+
+        <span class="s1">Spacer</span><span class="s3">(</span><span class="s1">modifier </span><span class="s3">= </span><span class="s1">Modifier</span><span class="s3">.</span><span class="s1">height</span><span class="s3">(</span><span class="s5">16</span><span class="s3">.</span><span class="s1">dp</span><span class="s3">))</span>
+
+        <span class="s1">Row</span><span class="s3">(</span><span class="s1">verticalAlignment </span><span class="s3">= </span><span class="s1">Alignment</span><span class="s3">.</span><span class="s1">CenterVertically</span><span class="s3">) {</span>
+            <span class="s1">Text</span><span class="s3">(</span><span class="s4">&quot;Shift:&quot;</span><span class="s3">)</span>
+            <span class="s1">Spacer</span><span class="s3">(</span><span class="s1">modifier </span><span class="s3">= </span><span class="s1">Modifier</span><span class="s3">.</span><span class="s1">width</span><span class="s3">(</span><span class="s5">8</span><span class="s3">.</span><span class="s1">dp</span><span class="s3">))</span>
+            <span class="s1">Row</span><span class="s3">(</span><span class="s1">verticalAlignment </span><span class="s3">= </span><span class="s1">Alignment</span><span class="s3">.</span><span class="s1">CenterVertically</span><span class="s3">) {</span>
+                <span class="s1">RadioButton</span><span class="s3">(</span>
+                    <span class="s1">selected </span><span class="s3">= </span><span class="s1">selectedShift </span><span class="s3">== </span><span class="s4">&quot;AM&quot;</span><span class="s3">,</span>
+                    <span class="s1">onClick </span><span class="s3">= {</span>
+                        <span class="s1">selectedShift </span><span class="s3">= </span><span class="s4">&quot;AM&quot;</span>
+                        <span class="s1">viewModel</span><span class="s3">.</span><span class="s1">updateSelectedShift</span><span class="s3">(</span><span class="s4">&quot;AM&quot;</span><span class="s3">) </span><span class="s0">// Update ViewModel</span>
+                    <span class="s3">}</span>
+                <span class="s3">)</span>
+                <span class="s1">Text</span><span class="s3">(</span>
+                    <span class="s1">text </span><span class="s3">= </span><span class="s4">&quot;AM&quot;</span><span class="s3">,</span>
+                    <span class="s1">modifier </span><span class="s3">= </span><span class="s1">Modifier</span><span class="s3">.</span><span class="s1">clickable </span><span class="s3">{</span>
+                        <span class="s1">selectedShift </span><span class="s3">= </span><span class="s4">&quot;AM&quot;</span>
+                        <span class="s1">viewModel</span><span class="s3">.</span><span class="s1">updateSelectedShift</span><span class="s3">(</span><span class="s4">&quot;AM&quot;</span><span class="s3">) </span><span class="s0">// Update ViewModel</span>
+                    <span class="s3">}</span>
+                <span class="s3">)</span>
+            <span class="s3">}</span>
+            <span class="s1">Row</span><span class="s3">(</span><span class="s1">verticalAlignment </span><span class="s3">= </span><span class="s1">Alignment</span><span class="s3">.</span><span class="s1">CenterVertically</span><span class="s3">) {</span>
+                <span class="s1">RadioButton</span><span class="s3">(</span>
+                    <span class="s1">selected </span><span class="s3">= </span><span class="s1">selectedShift </span><span class="s3">== </span><span class="s4">&quot;PM&quot;</span><span class="s3">,</span>
+                    <span class="s1">onClick </span><span class="s3">= {</span>
+                        <span class="s1">selectedShift </span><span class="s3">= </span><span class="s4">&quot;PM&quot;</span>
+                        <span class="s1">viewModel</span><span class="s3">.</span><span class="s1">updateSelectedShift</span><span class="s3">(</span><span class="s4">&quot;PM&quot;</span><span class="s3">) </span><span class="s0">// Update ViewModel</span>
+                    <span class="s3">}</span>
+                <span class="s3">)</span>
+                <span class="s1">Text</span><span class="s3">(</span>
+                    <span class="s1">text </span><span class="s3">= </span><span class="s4">&quot;PM&quot;</span><span class="s3">,</span>
+                    <span class="s1">modifier </span><span class="s3">= </span><span class="s1">Modifier</span><span class="s3">.</span><span class="s1">clickable </span><span class="s3">{</span>
+                        <span class="s1">selectedShift </span><span class="s3">= </span><span class="s4">&quot;PM&quot;</span>
+                        <span class="s1">viewModel</span><span class="s3">.</span><span class="s1">updateSelectedShift</span><span class="s3">(</span><span class="s4">&quot;PM&quot;</span><span class="s3">) </span><span class="s0">// Update ViewModel</span>
+                    <span class="s3">}</span>
+                <span class="s3">)</span>
+            <span class="s3">}</span>
+        <span class="s3">}</span>
+
+        <span class="s1">Spacer</span><span class="s3">(</span><span class="s1">modifier </span><span class="s3">= </span><span class="s1">Modifier</span><span class="s3">.</span><span class="s1">height</span><span class="s3">(</span><span class="s5">16</span><span class="s3">.</span><span class="s1">dp</span><span class="s3">))</span>
+
+        <span class="s1">Button</span><span class="s3">(</span><span class="s1">onClick </span><span class="s3">= { </span><span class="s1">timePickerDialog</span><span class="s3">.</span><span class="s1">show</span><span class="s3">() }) {</span>
+            <span class="s1">Text</span><span class="s3">(</span><span class="s1">text </span><span class="s3">= </span><span class="s1">selectedTime?</span><span class="s3">.</span><span class="s1">format</span><span class="s3">(</span><span class="s1">DateTimeFormatter</span><span class="s3">.</span><span class="s1">ofPattern</span><span class="s3">(</span><span class="s4">&quot;h:mm a&quot;</span><span class="s3">)) </span><span class="s1">?: </span><span class="s4">&quot;Select Shift Start Time&quot;</span><span class="s3">)</span>
+        <span class="s3">}</span>
+
+        <span class="s1">Spacer</span><span class="s3">(</span><span class="s1">modifier </span><span class="s3">= </span><span class="s1">Modifier</span><span class="s3">.</span><span class="s1">height</span><span class="s3">(</span><span class="s5">16</span><span class="s3">.</span><span class="s1">dp</span><span class="s3">))</span>
+
+        <span class="s1">Button</span><span class="s3">(</span><span class="s1">onClick </span><span class="s3">= {</span>
+            <span class="s1">viewModel</span><span class="s3">.</span><span class="s1">updateSelectedShift</span><span class="s3">(</span><span class="s1">selectedShift</span><span class="s3">)</span>
+            <span class="s0">//Update the ViewModel's values BEFORE generating:</span>
+            <span class="s1">viewModel</span><span class="s3">.</span><span class="s1">updateSelectedCheckpoint</span><span class="s3">(</span><span class="s1">selectedCheckpoint</span><span class="s3">)</span>
+            <span class="s1">viewModel</span><span class="s3">.</span><span class="s1">updateSelectedLane</span><span class="s3">(</span><span class="s1">selectedLane</span><span class="s3">)</span>
+            <span class="s1">viewModel</span><span class="s3">.</span><span class="s1">updateSelectedLead</span><span class="s3">(</span><span class="s1">selectedLead</span><span class="s3">)</span>
+            <span class="s1">viewModel</span><span class="s3">.</span><span class="s1">updateSelectedSupervisor</span><span class="s3">(</span><span class="s1">selectedSupervisor</span><span class="s3">)</span>
+
+
+            <span class="s1">onGenerateRotation</span><span class="s3">(</span><span class="s1">selectedDate</span><span class="s3">) </span><span class="s0">//Still pass the calendar for now</span>
+            <span class="s0">//Could call viewModel.generateRotationAndPdf() directly here,</span>
+            <span class="s0">//but keeping the separation for now.</span>
+        <span class="s3">}) {</span>
+            <span class="s1">Text</span><span class="s3">(</span><span class="s4">&quot;Generate Rotation&quot;</span><span class="s3">)</span>
+        <span class="s3">}</span>
+    <span class="s3">}</span>
+<span class="s3">}</span>
+
+<span class="s1">@Preview</span><span class="s3">(</span><span class="s1">showBackground </span><span class="s3">= </span><span class="s2">true</span><span class="s3">)</span>
+<span class="s1">@Composable</span>
+<span class="s2">fun </span><span class="s1">MainInputScreenPreview</span><span class="s3">() {</span>
+    <span class="s1">MaterialTheme </span><span class="s3">{</span>
+        <span class="s1">MainInputScreen</span><span class="s3">(</span><span class="s1">onGenerateRotation </span><span class="s3">= {})</span>
+    <span class="s3">}</span>
+<span class="s3">}</span></pre>
+</body>
+</html>

@@ -1,0 +1,137 @@
+<html>
+<head>
+<title>HomeScreen.kt</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<style type="text/css">
+.s0 { color: #7a7e85;}
+.s1 { color: #bcbec4;}
+.s2 { color: #cf8e6d;}
+.s3 { color: #bcbec4;}
+.s4 { color: #6aab73;}
+</style>
+</head>
+<body bgcolor="#1e1f22">
+<table CELLSPACING=0 CELLPADDING=5 COLS=1 WIDTH="100%" BGCOLOR="#606060" >
+<tr><td><center>
+<font face="Arial, Helvetica" color="#000000">
+HomeScreen.kt</font>
+</center></td></tr></table>
+<pre><span class="s0">// File: ui/main/HomeScreen.kt</span>
+<span class="s2">package </span><span class="s1">com</span><span class="s3">.</span><span class="s1">example</span><span class="s3">.</span><span class="s1">rotationappv10</span><span class="s3">.</span><span class="s1">ui</span><span class="s3">.</span><span class="s1">main</span>
+
+<span class="s1">import android</span><span class="s3">.</span><span class="s1">util</span><span class="s3">.</span><span class="s1">Log</span>
+<span class="s1">import androidx</span><span class="s3">.</span><span class="s1">compose</span><span class="s3">.</span><span class="s1">foundation</span><span class="s3">.</span><span class="s1">layout</span><span class="s3">.*</span>
+<span class="s1">import androidx</span><span class="s3">.</span><span class="s1">compose</span><span class="s3">.</span><span class="s1">material</span><span class="s3">.</span><span class="s1">icons</span><span class="s3">.</span><span class="s1">Icons</span>
+<span class="s1">import androidx</span><span class="s3">.</span><span class="s1">compose</span><span class="s3">.</span><span class="s1">material</span><span class="s3">.</span><span class="s1">icons</span><span class="s3">.</span><span class="s1">filled</span><span class="s3">.</span><span class="s1">Home</span>
+<span class="s1">import androidx</span><span class="s3">.</span><span class="s1">compose</span><span class="s3">.</span><span class="s1">material</span><span class="s3">.</span><span class="s1">icons</span><span class="s3">.</span><span class="s1">filled</span><span class="s3">.</span><span class="s1">Person</span>
+<span class="s1">import androidx</span><span class="s3">.</span><span class="s1">compose</span><span class="s3">.</span><span class="s1">material</span><span class="s3">.</span><span class="s1">icons</span><span class="s3">.</span><span class="s1">filled</span><span class="s3">.</span><span class="s1">Place</span>
+<span class="s1">import androidx</span><span class="s3">.</span><span class="s1">compose</span><span class="s3">.</span><span class="s1">material3</span><span class="s3">.*</span>
+<span class="s1">import androidx</span><span class="s3">.</span><span class="s1">compose</span><span class="s3">.</span><span class="s1">runtime</span><span class="s3">.*</span>
+<span class="s1">import androidx</span><span class="s3">.</span><span class="s1">compose</span><span class="s3">.</span><span class="s1">ui</span><span class="s3">.</span><span class="s1">Modifier</span>
+<span class="s1">import androidx</span><span class="s3">.</span><span class="s1">compose</span><span class="s3">.</span><span class="s1">ui</span><span class="s3">.</span><span class="s1">graphics</span><span class="s3">.</span><span class="s1">Color</span>
+<span class="s1">import androidx</span><span class="s3">.</span><span class="s1">compose</span><span class="s3">.</span><span class="s1">ui</span><span class="s3">.</span><span class="s1">platform</span><span class="s3">.</span><span class="s1">LocalContext</span>
+<span class="s1">import androidx</span><span class="s3">.</span><span class="s1">compose</span><span class="s3">.</span><span class="s1">ui</span><span class="s3">.</span><span class="s1">res</span><span class="s3">.</span><span class="s1">stringResource</span>
+<span class="s1">import androidx</span><span class="s3">.</span><span class="s1">compose</span><span class="s3">.</span><span class="s1">ui</span><span class="s3">.</span><span class="s1">unit</span><span class="s3">.</span><span class="s1">dp</span>
+<span class="s1">import androidx</span><span class="s3">.</span><span class="s1">lifecycle</span><span class="s3">.</span><span class="s1">viewmodel</span><span class="s3">.</span><span class="s1">compose</span><span class="s3">.</span><span class="s1">viewModel</span>
+<span class="s1">import com</span><span class="s3">.</span><span class="s1">example</span><span class="s3">.</span><span class="s1">rotationappv10</span><span class="s3">.</span><span class="s1">R</span>
+<span class="s1">import com</span><span class="s3">.</span><span class="s1">example</span><span class="s3">.</span><span class="s1">rotationappv10</span><span class="s3">.</span><span class="s1">ui</span><span class="s3">.</span><span class="s1">navigation</span><span class="s3">.</span><span class="s1">Screen</span>
+<span class="s1">import com</span><span class="s3">.</span><span class="s1">example</span><span class="s3">.</span><span class="s1">rotationappv10</span><span class="s3">.</span><span class="s1">viewmodel</span><span class="s3">.</span><span class="s1">MainViewModel</span>
+<span class="s1">import androidx</span><span class="s3">.</span><span class="s1">navigation</span><span class="s3">.</span><span class="s1">compose</span><span class="s3">.</span><span class="s1">rememberNavController </span><span class="s0">// Correct Import</span>
+<span class="s1">import androidx</span><span class="s3">.</span><span class="s1">navigation</span><span class="s3">.</span><span class="s1">compose</span><span class="s3">.</span><span class="s1">NavHost </span><span class="s0">// Correct Import</span>
+<span class="s1">import androidx</span><span class="s3">.</span><span class="s1">navigation</span><span class="s3">.</span><span class="s1">compose</span><span class="s3">.</span><span class="s1">composable </span><span class="s0">// Correct Import</span>
+<span class="s1">import androidx</span><span class="s3">.</span><span class="s1">navigation</span><span class="s3">.</span><span class="s1">NavController </span><span class="s0">//Correct Import</span>
+
+<span class="s1">private const </span><span class="s2">val </span><span class="s1">TAG </span><span class="s3">= </span><span class="s4">&quot;HomeScreen&quot;</span>
+
+<span class="s1">@OptIn</span><span class="s3">(</span><span class="s1">ExperimentalMaterial3Api::</span><span class="s2">class</span><span class="s3">)</span>
+<span class="s1">@Composable</span>
+<span class="s2">fun </span><span class="s1">HomeScreen</span><span class="s3">() {</span>
+    <span class="s2">val </span><span class="s1">viewModel: MainViewModel </span><span class="s3">= </span><span class="s1">viewModel</span><span class="s3">()</span>
+    <span class="s0">// Use rememberNavController to create a NavController</span>
+    <span class="s2">val </span><span class="s1">navController </span><span class="s3">= </span><span class="s1">rememberNavController</span><span class="s3">()</span>
+
+    <span class="s1">Scaffold</span><span class="s3">(</span>
+        <span class="s1">bottomBar </span><span class="s3">= {</span>
+            <span class="s1">NavigationBar</span><span class="s3">(</span>
+                <span class="s1">containerColor </span><span class="s3">= </span><span class="s1">MaterialTheme</span><span class="s3">.</span><span class="s1">colorScheme</span><span class="s3">.</span><span class="s1">primary</span><span class="s3">,</span>
+                <span class="s1">contentColor </span><span class="s3">= </span><span class="s1">Color</span><span class="s3">.</span><span class="s1">White</span>
+            <span class="s3">) {</span>
+                <span class="s2">val </span><span class="s1">items </span><span class="s3">= </span><span class="s1">listOf</span><span class="s3">(</span>
+                    <span class="s1">Screen</span><span class="s3">.</span><span class="s1">Personnel</span><span class="s3">,</span>
+                    <span class="s1">Screen</span><span class="s3">.</span><span class="s1">Main</span><span class="s3">,</span>
+                    <span class="s1">Screen</span><span class="s3">.</span><span class="s1">Location</span><span class="s3">,</span>
+                <span class="s3">)</span>
+                <span class="s0">// Use a single state variable for the selected screen</span>
+                <span class="s2">var </span><span class="s1">selectedScreen by remember </span><span class="s3">{ </span><span class="s1">mutableStateOf</span><span class="s3">&lt;</span><span class="s1">Screen</span><span class="s3">&gt;(</span><span class="s1">Screen</span><span class="s3">.</span><span class="s1">Main</span><span class="s3">) }</span>
+
+                <span class="s1">items</span><span class="s3">.</span><span class="s1">forEach </span><span class="s3">{ </span><span class="s1">screen </span><span class="s3">-&gt;</span>
+                    <span class="s1">NavigationBarItem</span><span class="s3">(</span>
+                        <span class="s1">icon </span><span class="s3">= { </span><span class="s1">Icon</span><span class="s3">(</span><span class="s1">imageVector </span><span class="s3">= </span><span class="s1">screen</span><span class="s3">.</span><span class="s1">icon</span><span class="s3">, </span><span class="s1">contentDescription </span><span class="s3">= </span><span class="s1">screen</span><span class="s3">.</span><span class="s1">route</span><span class="s3">) },</span>
+                        <span class="s1">label </span><span class="s3">= { </span><span class="s1">Text</span><span class="s3">(</span><span class="s1">stringResource</span><span class="s3">(</span><span class="s1">screen</span><span class="s3">.</span><span class="s1">resourceId</span><span class="s3">)) },</span>
+                        <span class="s1">selected </span><span class="s3">= </span><span class="s1">selectedScreen </span><span class="s3">== </span><span class="s1">screen</span><span class="s3">,</span>
+                        <span class="s1">onClick </span><span class="s3">= {</span>
+                            <span class="s1">selectedScreen </span><span class="s3">= </span><span class="s1">screen </span><span class="s0">// Update selected screen</span>
+                            <span class="s1">navController</span><span class="s3">.</span><span class="s1">navigate</span><span class="s3">(</span><span class="s1">screen</span><span class="s3">.</span><span class="s1">route</span><span class="s3">) {</span>
+                                <span class="s0">// Pop up to the start destination of the graph to</span>
+                                <span class="s0">// avoid building up a large stack of destinations</span>
+                                <span class="s0">// on the back stack as users select items</span>
+                                <span class="s1">popUpTo</span><span class="s3">(</span><span class="s1">navController</span><span class="s3">.</span><span class="s1">graph</span><span class="s3">.</span><span class="s1">startDestinationId</span><span class="s3">) {</span>
+                                    <span class="s1">saveState </span><span class="s3">= </span><span class="s2">true</span>
+                                <span class="s3">}</span>
+                                <span class="s0">// Avoid multiple copies of the same destination when</span>
+                                <span class="s0">// reselecting the same item</span>
+                                <span class="s1">launchSingleTop </span><span class="s3">= </span><span class="s2">true</span>
+                                <span class="s0">// Restore state when reselecting a previously selected item</span>
+                                <span class="s1">restoreState </span><span class="s3">= </span><span class="s2">true</span>
+                            <span class="s3">}</span>
+                        <span class="s3">}</span>
+                    <span class="s3">)</span>
+                <span class="s3">}</span>
+            <span class="s3">}</span>
+        <span class="s3">}</span>
+    <span class="s3">) { </span><span class="s1">innerPadding </span><span class="s3">-&gt;</span>
+        <span class="s0">// NavHost to manage navigation</span>
+        <span class="s1">NavHost</span><span class="s3">(</span>
+            <span class="s1">navController </span><span class="s3">= </span><span class="s1">navController</span><span class="s3">,</span>
+            <span class="s1">startDestination </span><span class="s3">= </span><span class="s1">Screen</span><span class="s3">.</span><span class="s1">Main</span><span class="s3">.</span><span class="s1">route</span><span class="s3">,</span>
+            <span class="s1">modifier </span><span class="s3">= </span><span class="s1">Modifier</span><span class="s3">.</span><span class="s1">padding</span><span class="s3">(</span><span class="s1">innerPadding</span><span class="s3">)</span>
+        <span class="s3">) {</span>
+            <span class="s1">composable</span><span class="s3">(</span><span class="s1">Screen</span><span class="s3">.</span><span class="s1">Main</span><span class="s3">.</span><span class="s1">route</span><span class="s3">) {</span>
+                <span class="s1">MainScreen</span><span class="s3">(</span><span class="s1">viewModel</span><span class="s3">)</span>
+            <span class="s3">}</span>
+            <span class="s1">composable</span><span class="s3">(</span><span class="s1">Screen</span><span class="s3">.</span><span class="s1">Personnel</span><span class="s3">.</span><span class="s1">route</span><span class="s3">) {</span>
+                <span class="s1">PersonnelScreen</span><span class="s3">() </span><span class="s0">// Use the PersonnelScreen composable</span>
+            <span class="s3">}</span>
+            <span class="s1">composable</span><span class="s3">(</span><span class="s1">Screen</span><span class="s3">.</span><span class="s1">Location</span><span class="s3">.</span><span class="s1">route</span><span class="s3">) {</span>
+                <span class="s1">LocationScreen</span><span class="s3">() </span><span class="s0">// Use the LocationScreen composable</span>
+            <span class="s3">}</span>
+        <span class="s3">}</span>
+    <span class="s3">}</span>
+<span class="s3">}</span>
+<span class="s0">//Composable for Main Screen</span>
+<span class="s1">@Composable</span>
+<span class="s2">fun </span><span class="s1">MainScreen</span><span class="s3">(</span><span class="s1">viewModel: MainViewModel</span><span class="s3">) {</span>
+    <span class="s0">// Get the context at the composable level</span>
+    <span class="s2">val </span><span class="s1">context </span><span class="s3">= </span><span class="s1">LocalContext</span><span class="s3">.</span><span class="s1">current</span>
+
+    <span class="s0">// Pass the captured context to the lambda</span>
+    <span class="s1">MainInputScreen</span><span class="s3">(</span><span class="s1">onGenerateRotation </span><span class="s3">= { </span><span class="s1">calendar </span><span class="s3">-&gt;</span>
+        <span class="s2">if </span><span class="s3">(</span><span class="s1">calendar </span><span class="s3">!= </span><span class="s2">null</span><span class="s3">) {</span>
+            <span class="s1">viewModel</span><span class="s3">.</span><span class="s1">generateRotationAndPdf</span><span class="s3">(</span><span class="s1">context </span><span class="s3">= </span><span class="s1">context</span><span class="s3">)</span>
+        <span class="s3">}</span>
+    <span class="s3">})</span>
+<span class="s3">}</span>
+
+<span class="s1">@Composable</span>
+<span class="s2">fun </span><span class="s1">PersonnelScreen</span><span class="s3">() {</span>
+    <span class="s0">// Placeholder content for now.  You'll move officer input here.</span>
+    <span class="s1">Text</span><span class="s3">(</span><span class="s4">&quot;Personnel Screen Content - Officer Input will go here&quot;</span><span class="s3">)</span>
+<span class="s3">}</span>
+
+<span class="s1">@Composable</span>
+<span class="s2">fun </span><span class="s1">LocationScreen</span><span class="s3">() {</span>
+    <span class="s0">// Placeholder content</span>
+    <span class="s1">Text</span><span class="s3">(</span><span class="s4">&quot;Location Screen Content - Location Settings will go here&quot;</span><span class="s3">)</span>
+<span class="s3">}</span></pre>
+</body>
+</html>

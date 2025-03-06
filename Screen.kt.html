@@ -1,0 +1,36 @@
+<html>
+<head>
+<title>Screen.kt</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<style type="text/css">
+.s0 { color: #7a7e85;}
+.s1 { color: #bcbec4;}
+.s2 { color: #cf8e6d;}
+.s3 { color: #bcbec4;}
+.s4 { color: #6aab73;}
+</style>
+</head>
+<body bgcolor="#1e1f22">
+<table CELLSPACING=0 CELLPADDING=5 COLS=1 WIDTH="100%" BGCOLOR="#606060" >
+<tr><td><center>
+<font face="Arial, Helvetica" color="#000000">
+Screen.kt</font>
+</center></td></tr></table>
+<pre><span class="s0">// File: ui/navigation/Screen.kt</span>
+<span class="s2">package </span><span class="s1">com</span><span class="s3">.</span><span class="s1">example</span><span class="s3">.</span><span class="s1">rotationappv10</span><span class="s3">.</span><span class="s1">ui</span><span class="s3">.</span><span class="s1">navigation</span>
+
+<span class="s1">import androidx</span><span class="s3">.</span><span class="s1">annotation</span><span class="s3">.</span><span class="s1">StringRes</span>
+<span class="s1">import androidx</span><span class="s3">.</span><span class="s1">compose</span><span class="s3">.</span><span class="s1">material</span><span class="s3">.</span><span class="s1">icons</span><span class="s3">.</span><span class="s1">Icons</span>
+<span class="s1">import androidx</span><span class="s3">.</span><span class="s1">compose</span><span class="s3">.</span><span class="s1">material</span><span class="s3">.</span><span class="s1">icons</span><span class="s3">.</span><span class="s1">filled</span><span class="s3">.</span><span class="s1">Home</span>
+<span class="s1">import androidx</span><span class="s3">.</span><span class="s1">compose</span><span class="s3">.</span><span class="s1">material</span><span class="s3">.</span><span class="s1">icons</span><span class="s3">.</span><span class="s1">filled</span><span class="s3">.</span><span class="s1">Person</span>
+<span class="s1">import androidx</span><span class="s3">.</span><span class="s1">compose</span><span class="s3">.</span><span class="s1">material</span><span class="s3">.</span><span class="s1">icons</span><span class="s3">.</span><span class="s1">filled</span><span class="s3">.</span><span class="s1">Place</span>
+<span class="s1">import androidx</span><span class="s3">.</span><span class="s1">compose</span><span class="s3">.</span><span class="s1">ui</span><span class="s3">.</span><span class="s1">graphics</span><span class="s3">.</span><span class="s1">vector</span><span class="s3">.</span><span class="s1">ImageVector</span>
+<span class="s1">import com</span><span class="s3">.</span><span class="s1">example</span><span class="s3">.</span><span class="s1">rotationappv10</span><span class="s3">.</span><span class="s1">R</span>
+
+<span class="s1">sealed </span><span class="s2">class </span><span class="s1">Screen</span><span class="s3">(</span><span class="s2">val </span><span class="s1">route: String</span><span class="s3">, </span><span class="s1">@StringRes </span><span class="s2">val </span><span class="s1">resourceId: Int</span><span class="s3">, </span><span class="s2">val </span><span class="s1">icon: ImageVector</span><span class="s3">) {</span>
+    <span class="s2">object </span><span class="s1">Main : Screen</span><span class="s3">(</span><span class="s4">&quot;main&quot;</span><span class="s3">, </span><span class="s1">R</span><span class="s3">.</span><span class="s1">string</span><span class="s3">.</span><span class="s1">main_screen_title</span><span class="s3">, </span><span class="s1">Icons</span><span class="s3">.</span><span class="s1">Filled</span><span class="s3">.</span><span class="s1">Home</span><span class="s3">)</span>
+    <span class="s2">object </span><span class="s1">Personnel : Screen</span><span class="s3">(</span><span class="s4">&quot;personnel&quot;</span><span class="s3">, </span><span class="s1">R</span><span class="s3">.</span><span class="s1">string</span><span class="s3">.</span><span class="s1">personnel_screen_title</span><span class="s3">, </span><span class="s1">Icons</span><span class="s3">.</span><span class="s1">Filled</span><span class="s3">.</span><span class="s1">Person</span><span class="s3">)</span>
+    <span class="s2">object </span><span class="s1">Location : Screen</span><span class="s3">(</span><span class="s4">&quot;location&quot;</span><span class="s3">, </span><span class="s1">R</span><span class="s3">.</span><span class="s1">string</span><span class="s3">.</span><span class="s1">location_screen_title</span><span class="s3">, </span><span class="s1">Icons</span><span class="s3">.</span><span class="s1">Filled</span><span class="s3">.</span><span class="s1">Place</span><span class="s3">)</span>
+<span class="s3">}</span></pre>
+</body>
+</html>

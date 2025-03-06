@@ -1,0 +1,187 @@
+<html>
+<head>
+<title>MainViewModel.kt</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<style type="text/css">
+.s0 { color: #7a7e85;}
+.s1 { color: #bcbec4;}
+.s2 { color: #cf8e6d;}
+.s3 { color: #bcbec4;}
+.s4 { color: #6aab73;}
+.s5 { color: #2aacb8;}
+</style>
+</head>
+<body bgcolor="#1e1f22">
+<table CELLSPACING=0 CELLPADDING=5 COLS=1 WIDTH="100%" BGCOLOR="#606060" >
+<tr><td><center>
+<font face="Arial, Helvetica" color="#000000">
+MainViewModel.kt</font>
+</center></td></tr></table>
+<pre><span class="s0">// File: viewmodel/MainViewModel.kt</span>
+<span class="s2">package </span><span class="s1">com</span><span class="s3">.</span><span class="s1">example</span><span class="s3">.</span><span class="s1">rotationappv10</span><span class="s3">.</span><span class="s1">viewmodel</span>
+
+<span class="s1">import android</span><span class="s3">.</span><span class="s1">content</span><span class="s3">.</span><span class="s1">Context</span>
+<span class="s1">import android</span><span class="s3">.</span><span class="s1">os</span><span class="s3">.</span><span class="s1">Build</span>
+<span class="s1">import android</span><span class="s3">.</span><span class="s1">util</span><span class="s3">.</span><span class="s1">Log</span>
+<span class="s1">import androidx</span><span class="s3">.</span><span class="s1">annotation</span><span class="s3">.</span><span class="s1">RequiresApi</span>
+<span class="s1">import androidx</span><span class="s3">.</span><span class="s1">compose</span><span class="s3">.</span><span class="s1">runtime</span><span class="s3">.</span><span class="s1">getValue</span>
+<span class="s1">import androidx</span><span class="s3">.</span><span class="s1">compose</span><span class="s3">.</span><span class="s1">runtime</span><span class="s3">.</span><span class="s1">mutableStateOf</span>
+<span class="s1">import androidx</span><span class="s3">.</span><span class="s1">compose</span><span class="s3">.</span><span class="s1">runtime</span><span class="s3">.</span><span class="s1">setValue</span>
+<span class="s1">import androidx</span><span class="s3">.</span><span class="s1">lifecycle</span><span class="s3">.</span><span class="s1">ViewModel</span>
+<span class="s1">import com</span><span class="s3">.</span><span class="s1">example</span><span class="s3">.</span><span class="s1">rotationappv10</span><span class="s3">.</span><span class="s1">algorithm</span><span class="s3">.</span><span class="s1">RotationAlgorithm</span>
+<span class="s1">import com</span><span class="s3">.</span><span class="s1">example</span><span class="s3">.</span><span class="s1">rotationappv10</span><span class="s3">.</span><span class="s1">data</span><span class="s3">.</span><span class="s1">model</span><span class="s3">.</span><span class="s1">Assignment</span>
+<span class="s1">import com</span><span class="s3">.</span><span class="s1">example</span><span class="s3">.</span><span class="s1">rotationappv10</span><span class="s3">.</span><span class="s1">data</span><span class="s3">.</span><span class="s1">model</span><span class="s3">.</span><span class="s1">Officer</span>
+<span class="s1">import com</span><span class="s3">.</span><span class="s1">example</span><span class="s3">.</span><span class="s1">rotationappv10</span><span class="s3">.</span><span class="s1">data</span><span class="s3">.</span><span class="s1">model</span><span class="s3">.</span><span class="s1">PositionKey</span>
+<span class="s1">import com</span><span class="s3">.</span><span class="s1">example</span><span class="s3">.</span><span class="s1">rotationappv10</span><span class="s3">.</span><span class="s1">data</span><span class="s3">.</span><span class="s1">model</span><span class="s3">.</span><span class="s1">RotationSheet</span>
+<span class="s1">import com</span><span class="s3">.</span><span class="s1">example</span><span class="s3">.</span><span class="s1">rotationappv10</span><span class="s3">.</span><span class="s1">data</span><span class="s3">.</span><span class="s1">model</span><span class="s3">.</span><span class="s1">ShiftSetting</span>
+<span class="s1">import com</span><span class="s3">.</span><span class="s1">example</span><span class="s3">.</span><span class="s1">rotationappv10</span><span class="s3">.</span><span class="s1">pdf</span><span class="s3">.</span><span class="s1">PdfGenerator</span>
+<span class="s1">import kotlinx</span><span class="s3">.</span><span class="s1">coroutines</span><span class="s3">.</span><span class="s1">flow</span><span class="s3">.</span><span class="s1">MutableStateFlow</span>
+<span class="s1">import kotlinx</span><span class="s3">.</span><span class="s1">coroutines</span><span class="s3">.</span><span class="s1">flow</span><span class="s3">.</span><span class="s1">StateFlow</span>
+<span class="s1">import kotlinx</span><span class="s3">.</span><span class="s1">coroutines</span><span class="s3">.</span><span class="s1">flow</span><span class="s3">.</span><span class="s1">asStateFlow</span>
+<span class="s1">import java</span><span class="s3">.</span><span class="s1">io</span><span class="s3">.</span><span class="s1">File</span>
+<span class="s1">import java</span><span class="s3">.</span><span class="s1">time</span><span class="s3">.</span><span class="s1">LocalDate</span>
+<span class="s1">import java</span><span class="s3">.</span><span class="s1">time</span><span class="s3">.</span><span class="s1">LocalTime</span>
+<span class="s1">import java</span><span class="s3">.</span><span class="s1">time</span><span class="s3">.</span><span class="s1">format</span><span class="s3">.</span><span class="s1">DateTimeFormatter</span>
+<span class="s1">import java</span><span class="s3">.</span><span class="s1">util</span><span class="s3">.</span><span class="s1">Calendar</span>
+
+<span class="s2">class </span><span class="s1">MainViewModel : ViewModel</span><span class="s3">() {</span>
+
+    <span class="s1">private </span><span class="s2">val </span><span class="s1">_officers </span><span class="s3">= </span><span class="s1">MutableStateFlow</span><span class="s3">&lt;</span><span class="s1">List</span><span class="s3">&lt;</span><span class="s1">Officer</span><span class="s3">&gt;&gt;(</span><span class="s1">emptyList</span><span class="s3">())</span>
+    <span class="s2">val </span><span class="s1">officers: StateFlow</span><span class="s3">&lt;</span><span class="s1">List</span><span class="s3">&lt;</span><span class="s1">Officer</span><span class="s3">&gt;&gt; = </span><span class="s1">_officers</span><span class="s3">.</span><span class="s1">asStateFlow</span><span class="s3">()</span>
+
+    <span class="s1">private </span><span class="s2">val </span><span class="s1">_rotationSheet </span><span class="s3">= </span><span class="s1">MutableStateFlow</span><span class="s3">&lt;</span><span class="s1">RotationSheet?</span><span class="s3">&gt;(</span><span class="s2">null</span><span class="s3">)</span>
+    <span class="s2">val </span><span class="s1">rotationSheet: StateFlow</span><span class="s3">&lt;</span><span class="s1">RotationSheet?</span><span class="s3">&gt; = </span><span class="s1">_rotationSheet</span><span class="s3">.</span><span class="s1">asStateFlow</span><span class="s3">()</span>
+
+    <span class="s1">private </span><span class="s2">val </span><span class="s1">_selectedDate </span><span class="s3">= </span><span class="s1">MutableStateFlow</span><span class="s3">&lt;</span><span class="s1">LocalDate</span><span class="s3">&gt;(</span><span class="s1">LocalDate</span><span class="s3">.</span><span class="s1">now</span><span class="s3">())</span>
+    <span class="s2">val </span><span class="s1">selectedDate: StateFlow</span><span class="s3">&lt;</span><span class="s1">LocalDate</span><span class="s3">&gt; = </span><span class="s1">_selectedDate</span><span class="s3">.</span><span class="s1">asStateFlow</span><span class="s3">()</span>
+
+    <span class="s2">fun </span><span class="s1">updateSelectedDate</span><span class="s3">(</span><span class="s1">newDate: LocalDate</span><span class="s3">) {</span>
+        <span class="s1">_selectedDate</span><span class="s3">.</span><span class="s1">value </span><span class="s3">= </span><span class="s1">newDate</span>
+    <span class="s3">}</span>
+
+    <span class="s1">private </span><span class="s2">val </span><span class="s1">_selectedShift </span><span class="s3">= </span><span class="s1">MutableStateFlow</span><span class="s3">(</span><span class="s4">&quot;&quot;</span><span class="s3">)</span>
+    <span class="s2">val </span><span class="s1">selectedShift: StateFlow</span><span class="s3">&lt;</span><span class="s1">String</span><span class="s3">&gt; = </span><span class="s1">_selectedShift</span><span class="s3">.</span><span class="s1">asStateFlow</span><span class="s3">()</span>
+
+    <span class="s2">fun </span><span class="s1">updateSelectedShift</span><span class="s3">(</span><span class="s1">newShift: String</span><span class="s3">) {</span>
+        <span class="s1">_selectedShift</span><span class="s3">.</span><span class="s1">value </span><span class="s3">= </span><span class="s1">newShift </span><span class="s0">// Use StateFlow</span>
+    <span class="s3">}</span>
+
+    <span class="s1">private </span><span class="s2">val </span><span class="s1">_selectedShiftTime </span><span class="s3">= </span><span class="s1">MutableStateFlow</span><span class="s3">&lt;</span><span class="s1">LocalTime?</span><span class="s3">&gt;(</span><span class="s2">null</span><span class="s3">)</span>
+    <span class="s2">val </span><span class="s1">selectedShiftTime: StateFlow</span><span class="s3">&lt;</span><span class="s1">LocalTime?</span><span class="s3">&gt; = </span><span class="s1">_selectedShiftTime</span><span class="s3">.</span><span class="s1">asStateFlow</span><span class="s3">()</span>
+
+    <span class="s2">fun </span><span class="s1">updateSelectedShiftTime</span><span class="s3">(</span><span class="s1">newTime: LocalTime</span><span class="s3">) {</span>
+        <span class="s1">_selectedShiftTime</span><span class="s3">.</span><span class="s1">value </span><span class="s3">= </span><span class="s1">newTime</span>
+    <span class="s3">}</span>
+    <span class="s1">private </span><span class="s2">val </span><span class="s1">_selectedCheckpoint </span><span class="s3">= </span><span class="s1">MutableStateFlow</span><span class="s3">(</span><span class="s4">&quot;&quot;</span><span class="s3">)</span>
+    <span class="s2">val </span><span class="s1">selectedCheckpoint: StateFlow</span><span class="s3">&lt;</span><span class="s1">String</span><span class="s3">&gt; = </span><span class="s1">_selectedCheckpoint</span><span class="s3">.</span><span class="s1">asStateFlow</span><span class="s3">()</span>
+
+    <span class="s2">fun </span><span class="s1">updateSelectedCheckpoint</span><span class="s3">(</span><span class="s1">newCheckpoint: String</span><span class="s3">){</span>
+        <span class="s1">_selectedCheckpoint</span><span class="s3">.</span><span class="s1">value </span><span class="s3">= </span><span class="s1">newCheckpoint </span><span class="s0">//Use StateFlow</span>
+    <span class="s3">}</span>
+
+    <span class="s1">private </span><span class="s2">val </span><span class="s1">_selectedLane </span><span class="s3">= </span><span class="s1">MutableStateFlow</span><span class="s3">(</span><span class="s4">&quot;&quot;</span><span class="s3">)</span>
+    <span class="s2">val </span><span class="s1">selectedLane: StateFlow</span><span class="s3">&lt;</span><span class="s1">String</span><span class="s3">&gt; = </span><span class="s1">_selectedLane</span><span class="s3">.</span><span class="s1">asStateFlow</span><span class="s3">()</span>
+    <span class="s2">fun </span><span class="s1">updateSelectedLane</span><span class="s3">(</span><span class="s1">newLane: String</span><span class="s3">) {</span>
+        <span class="s1">_selectedLane</span><span class="s3">.</span><span class="s1">value </span><span class="s3">= </span><span class="s1">newLane </span><span class="s0">// Use StateFlow</span>
+    <span class="s3">}</span>
+
+    <span class="s1">private </span><span class="s2">val </span><span class="s1">_selectedLead </span><span class="s3">= </span><span class="s1">MutableStateFlow</span><span class="s3">(</span><span class="s4">&quot;&quot;</span><span class="s3">)</span>
+    <span class="s2">val </span><span class="s1">selectedLead: StateFlow</span><span class="s3">&lt;</span><span class="s1">String</span><span class="s3">&gt; = </span><span class="s1">_selectedLead</span><span class="s3">.</span><span class="s1">asStateFlow</span><span class="s3">()</span>
+
+    <span class="s2">fun </span><span class="s1">updateSelectedLead</span><span class="s3">(</span><span class="s1">newLead: String</span><span class="s3">){</span>
+        <span class="s1">_selectedLead</span><span class="s3">.</span><span class="s1">value </span><span class="s3">= </span><span class="s1">newLead </span><span class="s0">// Use StateFlow</span>
+    <span class="s3">}</span>
+
+    <span class="s1">private </span><span class="s2">val </span><span class="s1">_selectedSupervisor </span><span class="s3">= </span><span class="s1">MutableStateFlow</span><span class="s3">(</span><span class="s4">&quot;&quot;</span><span class="s3">)</span>
+    <span class="s2">val </span><span class="s1">selectedSupervisor : StateFlow</span><span class="s3">&lt;</span><span class="s1">String</span><span class="s3">&gt; = </span><span class="s1">_selectedSupervisor</span><span class="s3">.</span><span class="s1">asStateFlow</span><span class="s3">()</span>
+    <span class="s2">fun </span><span class="s1">updateSelectedSupervisor</span><span class="s3">(</span><span class="s1">newSupervisor: String</span><span class="s3">){</span>
+        <span class="s1">_selectedSupervisor</span><span class="s3">.</span><span class="s1">value </span><span class="s3">= </span><span class="s1">newSupervisor </span><span class="s0">// Use StateFlow</span>
+    <span class="s3">}</span>
+    <span class="s2">var </span><span class="s1">generatedPdfFile by mutableStateOf</span><span class="s3">&lt;</span><span class="s1">File?</span><span class="s3">&gt;(</span><span class="s2">null</span><span class="s3">)</span>
+        <span class="s1">private set</span>
+    <span class="s2">var </span><span class="s1">errorMessage by mutableStateOf</span><span class="s3">&lt;</span><span class="s1">String?</span><span class="s3">&gt;(</span><span class="s2">null</span><span class="s3">)</span>
+        <span class="s1">private set</span>
+    <span class="s2">var </span><span class="s1">blankDate by mutableStateOf</span><span class="s3">(</span><span class="s2">false</span><span class="s3">)</span>
+        <span class="s1">private set</span>
+    <span class="s2">fun </span><span class="s1">updateBlankDate</span><span class="s3">(</span><span class="s1">newBlankDate: Boolean</span><span class="s3">){</span>
+        <span class="s1">blankDate </span><span class="s3">= </span><span class="s1">newBlankDate</span>
+    <span class="s3">}</span>
+
+
+    <span class="s2">fun </span><span class="s1">addOfficer</span><span class="s3">(</span><span class="s1">name: String</span><span class="s3">, </span><span class="s1">certifications: List</span><span class="s3">&lt;</span><span class="s1">String</span><span class="s3">&gt;, </span><span class="s1">startTime: String</span><span class="s3">, </span><span class="s1">gender: String</span><span class="s3">, </span><span class="s1">isFullTime: Boolean</span><span class="s3">) {</span>
+
+        <span class="s2">val </span><span class="s1">newOfficer </span><span class="s3">= </span><span class="s1">Officer</span><span class="s3">(</span><span class="s1">name</span><span class="s3">, </span><span class="s1">certifications</span><span class="s3">, </span><span class="s1">startTime</span><span class="s3">, </span><span class="s1">gender</span><span class="s3">, </span><span class="s1">isFullTime</span><span class="s3">)</span>
+        <span class="s1">_officers</span><span class="s3">.</span><span class="s1">value </span><span class="s3">= </span><span class="s1">_officers</span><span class="s3">.</span><span class="s1">value </span><span class="s3">+ </span><span class="s1">newOfficer</span>
+
+    <span class="s3">}</span>
+
+
+    <span class="s1">@RequiresApi</span><span class="s3">(</span><span class="s1">Build</span><span class="s3">.</span><span class="s1">VERSION_CODES</span><span class="s3">.</span><span class="s1">O</span><span class="s3">)</span>
+    <span class="s2">fun </span><span class="s1">generateRotation</span><span class="s3">()</span><span class="s1">: RotationSheet </span><span class="s3">{</span>
+        <span class="s1">Log</span><span class="s3">.</span><span class="s1">d</span><span class="s3">(</span><span class="s4">&quot;MainViewModel&quot;</span><span class="s3">, </span><span class="s4">&quot;generateRotation called&quot;</span><span class="s3">)</span>
+        <span class="s1">Log</span><span class="s3">.</span><span class="s1">d</span><span class="s3">(</span><span class="s4">&quot;MainViewModel&quot;</span><span class="s3">, </span><span class="s4">&quot;Selected Date: </span><span class="s2">${</span><span class="s1">selectedDate</span><span class="s3">.</span><span class="s1">value</span><span class="s2">}</span><span class="s4">&quot;</span><span class="s3">)</span>
+        <span class="s1">Log</span><span class="s3">.</span><span class="s1">d</span><span class="s3">(</span><span class="s4">&quot;MainViewModel&quot;</span><span class="s3">, </span><span class="s4">&quot;Selected Shift: </span><span class="s2">$</span><span class="s1">selectedShift</span><span class="s4">&quot;</span><span class="s3">)   </span><span class="s0">// Log the shift</span>
+        <span class="s1">Log</span><span class="s3">.</span><span class="s1">d</span><span class="s3">(</span><span class="s4">&quot;MainViewModel&quot;</span><span class="s3">, </span><span class="s4">&quot;Selected Shift Time: </span><span class="s2">${</span><span class="s1">selectedShiftTime</span><span class="s3">.</span><span class="s1">value</span><span class="s2">}</span><span class="s4">&quot;</span><span class="s3">) </span><span class="s0">// Log the time</span>
+
+
+        <span class="s2">val </span><span class="s1">algorithm </span><span class="s3">= </span><span class="s1">RotationAlgorithm</span><span class="s3">()</span>
+
+        <span class="s2">val </span><span class="s1">positionKeys </span><span class="s3">= </span><span class="s1">listOf</span><span class="s3">(</span>
+            <span class="s1">PositionKey</span><span class="s3">(</span><span class="s4">&quot;XRay&quot;</span><span class="s3">, </span><span class="s4">&quot;X-Ray&quot;</span><span class="s3">, </span><span class="s2">false</span><span class="s3">, </span><span class="s1">listOf</span><span class="s3">(</span><span class="s4">&quot;XRay Certification&quot;</span><span class="s3">)),</span>
+            <span class="s1">PositionKey</span><span class="s3">(</span><span class="s4">&quot;SST&quot;</span><span class="s3">, </span><span class="s4">&quot;SST&quot;</span><span class="s3">, </span><span class="s2">false</span><span class="s3">, </span><span class="s1">listOf</span><span class="s3">(</span><span class="s4">&quot;SST Certification&quot;</span><span class="s3">)),</span>
+            <span class="s1">PositionKey</span><span class="s3">(</span><span class="s4">&quot;DO&quot;</span><span class="s3">, </span><span class="s4">&quot;Document Check&quot;</span><span class="s3">, </span><span class="s2">false</span><span class="s3">, </span><span class="s1">listOf</span><span class="s3">()),</span>
+            <span class="s1">PositionKey</span><span class="s3">(</span><span class="s4">&quot;BRK&quot;</span><span class="s3">, </span><span class="s4">&quot;Break&quot;</span><span class="s3">, </span><span class="s2">true</span><span class="s3">, </span><span class="s1">listOf</span><span class="s3">(), </span><span class="s1">isBreak </span><span class="s3">= </span><span class="s2">true</span><span class="s3">)</span>
+        <span class="s3">)</span>
+        <span class="s0">//val shiftSetting = ShiftSetting(&quot;06:00&quot;, 30)</span>
+        <span class="s0">// Create ShiftSetting from the UI selections</span>
+        <span class="s2">val </span><span class="s1">shiftSetting </span><span class="s3">= </span><span class="s1">selectedShiftTime</span><span class="s3">.</span><span class="s1">value?</span><span class="s3">.</span><span class="s1">let </span><span class="s3">{</span>
+            <span class="s1">ShiftSetting</span><span class="s3">(</span><span class="s1">startTime </span><span class="s3">= </span><span class="s1">it</span><span class="s3">.</span><span class="s1">format</span><span class="s3">(</span><span class="s1">DateTimeFormatter</span><span class="s3">.</span><span class="s1">ofPattern</span><span class="s3">(</span><span class="s4">&quot;HH:mm&quot;</span><span class="s3">)), </span><span class="s1">interval </span><span class="s3">= </span><span class="s5">30</span><span class="s3">)</span>
+        <span class="s3">} </span><span class="s1">?: ShiftSetting</span><span class="s3">(</span><span class="s4">&quot;06:00&quot;</span><span class="s3">, </span><span class="s5">30</span><span class="s3">) </span><span class="s0">// Fallback to 06:00 if null</span>
+
+
+        <span class="s2">val </span><span class="s1">assignments </span><span class="s3">= </span><span class="s1">algorithm</span><span class="s3">.</span><span class="s1">generateRotation</span><span class="s3">(</span>
+            <span class="s1">officers </span><span class="s3">= </span><span class="s1">officers</span><span class="s3">.</span><span class="s1">value</span><span class="s3">,</span>
+            <span class="s1">positionKeys </span><span class="s3">= </span><span class="s1">positionKeys</span><span class="s3">,</span>
+            <span class="s1">shiftSetting </span><span class="s3">= </span><span class="s1">shiftSetting </span><span class="s0">//Pass correct shiftsetting</span>
+        <span class="s3">)</span>
+        <span class="s2">val </span><span class="s1">sheet </span><span class="s3">= </span><span class="s1">RotationSheet</span><span class="s3">(</span><span class="s1">date </span><span class="s3">= </span><span class="s1">selectedDate</span><span class="s3">.</span><span class="s1">value</span><span class="s3">.</span><span class="s1">toString</span><span class="s3">(), </span><span class="s1">shift </span><span class="s3">= </span><span class="s1">selectedShift</span><span class="s3">.</span><span class="s1">value</span><span class="s3">, </span><span class="s1">assignments </span><span class="s3">= </span><span class="s1">assignments</span><span class="s3">) </span><span class="s0">//Pass in shift here</span>
+        <span class="s1">_rotationSheet</span><span class="s3">.</span><span class="s1">value </span><span class="s3">= </span><span class="s1">sheet</span>
+        <span class="s2">return </span><span class="s1">sheet</span>
+    <span class="s3">}</span>
+
+
+    <span class="s1">@RequiresApi</span><span class="s3">(</span><span class="s1">Build</span><span class="s3">.</span><span class="s1">VERSION_CODES</span><span class="s3">.</span><span class="s1">Q</span><span class="s3">)</span>
+    <span class="s2">fun </span><span class="s1">generateRotationAndPdf</span><span class="s3">(</span><span class="s1">context: Context</span><span class="s3">) {</span>
+        <span class="s2">val </span><span class="s1">rotationSheet </span><span class="s3">= </span><span class="s1">generateRotation</span><span class="s3">()</span>
+
+        <span class="s2">val </span><span class="s1">positionKeys </span><span class="s3">= </span><span class="s1">listOf</span><span class="s3">(</span>
+            <span class="s1">PositionKey</span><span class="s3">(</span><span class="s4">&quot;XRay&quot;</span><span class="s3">, </span><span class="s4">&quot;X-Ray&quot;</span><span class="s3">, </span><span class="s2">false</span><span class="s3">, </span><span class="s1">listOf</span><span class="s3">(</span><span class="s4">&quot;XRay Certification&quot;</span><span class="s3">)),</span>
+            <span class="s1">PositionKey</span><span class="s3">(</span><span class="s4">&quot;SST&quot;</span><span class="s3">, </span><span class="s4">&quot;SST&quot;</span><span class="s3">, </span><span class="s2">false</span><span class="s3">, </span><span class="s1">listOf</span><span class="s3">(</span><span class="s4">&quot;SST Certification&quot;</span><span class="s3">)),</span>
+            <span class="s1">PositionKey</span><span class="s3">(</span><span class="s4">&quot;DO&quot;</span><span class="s3">, </span><span class="s4">&quot;Document Check&quot;</span><span class="s3">, </span><span class="s2">false</span><span class="s3">, </span><span class="s1">listOf</span><span class="s3">()),</span>
+            <span class="s1">PositionKey</span><span class="s3">(</span><span class="s4">&quot;BRK&quot;</span><span class="s3">, </span><span class="s4">&quot;Break&quot;</span><span class="s3">, </span><span class="s2">true</span><span class="s3">, </span><span class="s1">listOf</span><span class="s3">(), </span><span class="s1">isBreak </span><span class="s3">= </span><span class="s2">true</span><span class="s3">)</span>
+        <span class="s3">)</span>
+
+        <span class="s2">val </span><span class="s1">pdfGenerator </span><span class="s3">= </span><span class="s1">PdfGenerator</span><span class="s3">(</span><span class="s1">context</span><span class="s3">)</span>
+        <span class="s2">val </span><span class="s1">pdfFile </span><span class="s3">= </span><span class="s1">pdfGenerator</span><span class="s3">.</span><span class="s1">generatePdf</span><span class="s3">(</span>
+            <span class="s1">rotationSheet</span><span class="s3">,</span>
+            <span class="s1">positionKeys</span><span class="s3">,</span>
+            <span class="s1">selectedCheckpoint</span><span class="s3">.</span><span class="s1">value</span><span class="s3">,</span>
+            <span class="s1">selectedLane</span><span class="s3">.</span><span class="s1">value</span><span class="s3">,</span>
+            <span class="s1">selectedLead</span><span class="s3">.</span><span class="s1">value</span><span class="s3">,</span>
+            <span class="s1">selectedSupervisor</span><span class="s3">.</span><span class="s1">value</span><span class="s3">,</span>
+            <span class="s1">selectedDate</span><span class="s3">.</span><span class="s1">value</span><span class="s3">.</span><span class="s1">toString</span><span class="s3">(),</span>
+            <span class="s1">selectedShift</span><span class="s3">.</span><span class="s1">value</span><span class="s3">,</span>
+            <span class="s1">blankDate</span>
+        <span class="s3">)</span>
+
+        <span class="s1">generatedPdfFile </span><span class="s3">= </span><span class="s1">pdfFile</span>
+
+        <span class="s2">if </span><span class="s3">(</span><span class="s1">pdfFile </span><span class="s3">== </span><span class="s2">null</span><span class="s3">) {</span>
+            <span class="s1">errorMessage </span><span class="s3">= </span><span class="s4">&quot;Failed to generate PDF.&quot;</span>
+        <span class="s3">} </span><span class="s2">else </span><span class="s3">{</span>
+            <span class="s1">errorMessage </span><span class="s3">= </span><span class="s2">null</span>
+        <span class="s3">}</span>
+    <span class="s3">}</span>
+<span class="s3">}</span></pre>
+</body>
+</html>

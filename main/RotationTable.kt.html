@@ -1,0 +1,59 @@
+<html>
+<head>
+<title>RotationTable.kt</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<style type="text/css">
+.s0 { color: #7a7e85;}
+.s1 { color: #bcbec4;}
+.s2 { color: #cf8e6d;}
+.s3 { color: #bcbec4;}
+.s4 { color: #6aab73;}
+</style>
+</head>
+<body bgcolor="#1e1f22">
+<table CELLSPACING=0 CELLPADDING=5 COLS=1 WIDTH="100%" BGCOLOR="#606060" >
+<tr><td><center>
+<font face="Arial, Helvetica" color="#000000">
+RotationTable.kt</font>
+</center></td></tr></table>
+<pre><span class="s0">// File: ui/main/RotationTable.kt</span>
+<span class="s2">package </span><span class="s1">com</span><span class="s3">.</span><span class="s1">example</span><span class="s3">.</span><span class="s1">rotationappv10</span><span class="s3">.</span><span class="s1">ui</span><span class="s3">.</span><span class="s1">main</span>
+
+<span class="s1">import androidx</span><span class="s3">.</span><span class="s1">compose</span><span class="s3">.</span><span class="s1">foundation</span><span class="s3">.</span><span class="s1">layout</span><span class="s3">.</span><span class="s1">Column</span>
+<span class="s1">import androidx</span><span class="s3">.</span><span class="s1">compose</span><span class="s3">.</span><span class="s1">foundation</span><span class="s3">.</span><span class="s1">layout</span><span class="s3">.</span><span class="s1">Row</span>
+<span class="s1">import androidx</span><span class="s3">.</span><span class="s1">compose</span><span class="s3">.</span><span class="s1">foundation</span><span class="s3">.</span><span class="s1">lazy</span><span class="s3">.</span><span class="s1">LazyColumn </span><span class="s0">// Import LazyColumn (or Column if list is short)</span>
+<span class="s1">import androidx</span><span class="s3">.</span><span class="s1">compose</span><span class="s3">.</span><span class="s1">foundation</span><span class="s3">.</span><span class="s1">lazy</span><span class="s3">.</span><span class="s1">items </span><span class="s0">// Import items extension function</span>
+<span class="s1">import androidx</span><span class="s3">.</span><span class="s1">compose</span><span class="s3">.</span><span class="s1">material3</span><span class="s3">.</span><span class="s1">Text</span>
+<span class="s1">import androidx</span><span class="s3">.</span><span class="s1">compose</span><span class="s3">.</span><span class="s1">runtime</span><span class="s3">.</span><span class="s1">Composable</span>
+<span class="s1">import com</span><span class="s3">.</span><span class="s1">example</span><span class="s3">.</span><span class="s1">rotationappv10</span><span class="s3">.</span><span class="s1">data</span><span class="s3">.</span><span class="s1">model</span><span class="s3">.</span><span class="s1">Assignment</span>
+<span class="s1">import com</span><span class="s3">.</span><span class="s1">example</span><span class="s3">.</span><span class="s1">rotationappv10</span><span class="s3">.</span><span class="s1">data</span><span class="s3">.</span><span class="s1">model</span><span class="s3">.</span><span class="s1">RotationSheet</span>
+
+<span class="s1">@Composable</span>
+<span class="s2">fun </span><span class="s1">RotationTable</span><span class="s3">(</span><span class="s1">rotationSheet: RotationSheet</span><span class="s3">) {</span>
+    <span class="s1">Column </span><span class="s3">{ </span><span class="s0">// Keep the outer Column for headers and the LazyColumn</span>
+        <span class="s0">// Display table headers</span>
+        <span class="s1">Row </span><span class="s3">{</span>
+            <span class="s1">Text</span><span class="s3">(</span><span class="s4">&quot;Time Slot&quot;</span><span class="s3">)</span>
+            <span class="s1">Text</span><span class="s3">(</span><span class="s4">&quot;Officer&quot;</span><span class="s3">)</span>
+            <span class="s1">Text</span><span class="s3">(</span><span class="s4">&quot;Position&quot;</span><span class="s3">)</span>
+        <span class="s3">}</span>
+
+        <span class="s0">// Display assignments using LazyColumn for efficient list rendering</span>
+        <span class="s1">LazyColumn </span><span class="s3">{ </span><span class="s0">// Or use Column if the list is small and doesn't need lazy loading</span>
+            <span class="s1">items</span><span class="s3">(</span><span class="s1">rotationSheet</span><span class="s3">.</span><span class="s1">assignments</span><span class="s3">) { </span><span class="s1">assignment </span><span class="s3">-&gt; </span><span class="s0">// Use items extension</span>
+                <span class="s1">AssignmentRow</span><span class="s3">(</span><span class="s1">assignment </span><span class="s3">= </span><span class="s1">assignment</span><span class="s3">) </span><span class="s0">// Composable call within items lambda</span>
+            <span class="s3">}</span>
+        <span class="s3">}</span>
+    <span class="s3">}</span>
+<span class="s3">}</span>
+
+<span class="s1">@Composable</span>
+<span class="s2">fun </span><span class="s1">AssignmentRow</span><span class="s3">(</span><span class="s1">assignment: Assignment</span><span class="s3">) {</span>
+    <span class="s1">Row </span><span class="s3">{</span>
+        <span class="s1">Text</span><span class="s3">(</span><span class="s1">assignment</span><span class="s3">.</span><span class="s1">timeSlot</span><span class="s3">)</span>
+        <span class="s1">Text</span><span class="s3">(</span><span class="s1">assignment</span><span class="s3">.</span><span class="s1">officer?</span><span class="s3">.</span><span class="s1">name ?: </span><span class="s4">&quot;Unassigned&quot;</span><span class="s3">)</span>
+        <span class="s1">Text</span><span class="s3">(</span><span class="s1">assignment</span><span class="s3">.</span><span class="s1">positionKey?</span><span class="s3">.</span><span class="s1">code ?: </span><span class="s4">&quot;N/A&quot;</span><span class="s3">)</span>
+    <span class="s3">}</span>
+<span class="s3">}</span></pre>
+</body>
+</html>

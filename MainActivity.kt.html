@@ -1,0 +1,48 @@
+<html>
+<head>
+<title>MainActivity.kt</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<style type="text/css">
+.s0 { color: #7a7e85;}
+.s1 { color: #bcbec4;}
+.s2 { color: #cf8e6d;}
+.s3 { color: #bcbec4;}
+</style>
+</head>
+<body bgcolor="#1e1f22">
+<table CELLSPACING=0 CELLPADDING=5 COLS=1 WIDTH="100%" BGCOLOR="#606060" >
+<tr><td><center>
+<font face="Arial, Helvetica" color="#000000">
+MainActivity.kt</font>
+</center></td></tr></table>
+<pre><span class="s0">//File: MainActivity.kt</span>
+<span class="s2">package </span><span class="s1">com</span><span class="s3">.</span><span class="s1">example</span><span class="s3">.</span><span class="s1">rotationappv10</span>
+
+<span class="s1">import android</span><span class="s3">.</span><span class="s1">os</span><span class="s3">.</span><span class="s1">Bundle</span>
+<span class="s1">import androidx</span><span class="s3">.</span><span class="s1">activity</span><span class="s3">.</span><span class="s1">ComponentActivity</span>
+<span class="s1">import androidx</span><span class="s3">.</span><span class="s1">activity</span><span class="s3">.</span><span class="s1">compose</span><span class="s3">.</span><span class="s1">setContent</span>
+<span class="s1">import androidx</span><span class="s3">.</span><span class="s1">compose</span><span class="s3">.</span><span class="s1">foundation</span><span class="s3">.</span><span class="s1">layout</span><span class="s3">.</span><span class="s1">fillMaxSize</span>
+<span class="s1">import androidx</span><span class="s3">.</span><span class="s1">compose</span><span class="s3">.</span><span class="s1">material3</span><span class="s3">.</span><span class="s1">MaterialTheme</span>
+<span class="s1">import androidx</span><span class="s3">.</span><span class="s1">compose</span><span class="s3">.</span><span class="s1">material3</span><span class="s3">.</span><span class="s1">Surface</span>
+<span class="s1">import androidx</span><span class="s3">.</span><span class="s1">compose</span><span class="s3">.</span><span class="s1">runtime</span><span class="s3">.</span><span class="s1">Composable</span>
+<span class="s1">import androidx</span><span class="s3">.</span><span class="s1">compose</span><span class="s3">.</span><span class="s1">ui</span><span class="s3">.</span><span class="s1">Modifier</span>
+<span class="s1">import com</span><span class="s3">.</span><span class="s1">example</span><span class="s3">.</span><span class="s1">rotationappv10</span><span class="s3">.</span><span class="s1">ui</span><span class="s3">.</span><span class="s1">main</span><span class="s3">.</span><span class="s1">HomeScreen</span>
+<span class="s1">import com</span><span class="s3">.</span><span class="s1">example</span><span class="s3">.</span><span class="s1">rotationappv10</span><span class="s3">.</span><span class="s1">ui</span><span class="s3">.</span><span class="s1">theme</span><span class="s3">.</span><span class="s1">RotationAppV10Theme</span>
+
+<span class="s2">class </span><span class="s1">MainActivity : ComponentActivity</span><span class="s3">() {</span>
+    <span class="s1">override </span><span class="s2">fun </span><span class="s1">onCreate</span><span class="s3">(</span><span class="s1">savedInstanceState: Bundle?</span><span class="s3">) {</span>
+        <span class="s2">super</span><span class="s3">.</span><span class="s1">onCreate</span><span class="s3">(</span><span class="s1">savedInstanceState</span><span class="s3">)</span>
+        <span class="s1">setContent </span><span class="s3">{</span>
+            <span class="s1">RotationAppV10Theme </span><span class="s3">{</span>
+                <span class="s1">Surface</span><span class="s3">(</span>
+                    <span class="s1">modifier </span><span class="s3">= </span><span class="s1">Modifier</span><span class="s3">.</span><span class="s1">fillMaxSize</span><span class="s3">(),</span>
+                    <span class="s1">color </span><span class="s3">= </span><span class="s1">MaterialTheme</span><span class="s3">.</span><span class="s1">colorScheme</span><span class="s3">.</span><span class="s1">background</span>
+                <span class="s3">) {</span>
+                    <span class="s1">HomeScreen</span><span class="s3">() </span><span class="s0">// Calling HomeScreen</span>
+                <span class="s3">}</span>
+            <span class="s3">}</span>
+        <span class="s3">}</span>
+    <span class="s3">}</span>
+<span class="s3">}</span></pre>
+</body>
+</html>
